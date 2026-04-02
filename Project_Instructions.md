@@ -8,10 +8,6 @@ The focus is on:
 - Component structuring
 - Frontend data handling  
 
-> ⚠️ This is **not required to be production-ready** or backend-dependent.
-
-> 💡 If you have already built a similar dashboard, you may submit that instead. Include a clear explanation of how it meets the requirements along with repository or deployment links.
-
 ---
 
 ## 🧭 Key Instructions
