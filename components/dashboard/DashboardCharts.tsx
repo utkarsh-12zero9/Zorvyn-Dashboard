@@ -1,7 +1,7 @@
 'use client';
 
 import { useAppSelector } from '@/store/hooks';
-import { useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   ComposedChart, BarChart, Bar, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
   PieChart, Pie, Cell, Legend
@@ -10,7 +10,15 @@ import {
 const COLORS = ['#22c55e', '#f8590aff', '#eab308', '#3b82f6', '#ef4444', '#a855f7'];
 
 export function DashboardCharts() {
+  const [mounted, setMounted] = useState(false);
+  const [delayedMount, setDelayedMount] = useState(false);
   const transactions = useAppSelector((state) => state.finance.transactions);
+
+  useEffect(() => {
+    setMounted(true);
+    const timer = setTimeout(() => setDelayedMount(true), 250);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Time-based data (Income vs Expense grouped by Month)
   const barData = useMemo(() => {
@@ -18,10 +26,9 @@ export function DashboardCharts() {
 
     transactions.forEach(t => {
       const date = new Date(t.date);
-      const monthYear = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }); // e.g. "Jan 2024"
+      const monthYear = date.toLocaleDateString('en-US', { month: 'short' }); // e.g. "Jan"
 
       if (!dataByMonth[monthYear]) {
-        // Store a timestamp for accurate chronological sorting
         dataByMonth[monthYear] = {
           income: 0,
           expense: 0,
@@ -44,7 +51,7 @@ export function DashboardCharts() {
         net: data.income - data.expense,
         timestamp: data.timestamp 
       }))
-      .sort((a, b) => a.timestamp - b.timestamp); // Sort sequentially
+      .sort((a, b) => a.timestamp - b.timestamp);
   }, [transactions]);
 
   // Categorical data (Expenses breakdown)
@@ -66,11 +73,10 @@ export function DashboardCharts() {
     const { cx, cy, midAngle, outerRadius, percent } = props;
     const RADIAN = Math.PI / 180;
 
-    // Position it exactly on the outer edge edge
     const x = cx + outerRadius * Math.cos(-midAngle * RADIAN);
     const y = cy + outerRadius * Math.sin(-midAngle * RADIAN);
 
-    if (percent < 0.02) return null; // hide very tiny percentages
+    if (percent < 0.02) return null;
 
     return (
       <g>
@@ -82,46 +88,62 @@ export function DashboardCharts() {
     );
   };
 
+  if (!mounted) return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 h-[400px] animate-pulse" />
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 h-[400px] animate-pulse" />
+    </div>
+  );
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 transition-colors">
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 transition-colors min-w-0">
         <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-6">Income vs Expenses</h3>
-        <div className="h-72">
-          {barData.length > 0 ? (
-            <ResponsiveContainer width="100%" height="100%">
+        <div className="h-72 w-full relative min-h-[288px]">
+          {delayedMount && barData.length > 0 ? (
+            <ResponsiveContainer width="99.9%" height="100%">
               <ComposedChart data={barData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }} barGap={8}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
-                <XAxis dataKey="date" stroke="#a1a1aa" fontSize={12} tickLine={false} axisLine={false} tickMargin={10} />
-                <YAxis stroke="#a1a1aa" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `$${val}`} />
+                <XAxis 
+                  dataKey="date" 
+                  stroke="#a1a1aa" 
+                  fontSize={10} 
+                  tickLine={false} 
+                  axisLine={false} 
+                  tickMargin={12} 
+                  minTickGap={5}
+                  padding={{ left: 10, right: 10 }} 
+                />
+                <YAxis stroke="#a1a1aa" fontSize={10} tickLine={false} axisLine={false} tickFormatter={(val) => `$${val}`} />
                 <Tooltip
                   cursor={{ fill: '#27272a', opacity: 0.4 }}
-                  contentStyle={{ backgroundColor: '#18181b', borderColor: '#27272a', color: '#fff', borderRadius: '8px', padding: '12px' }}
-                  itemStyle={{ paddingBottom: '4px' }}
-                  formatter={(value: any, name: any) => [`$${Number(value).toFixed(2)}`, name]}
+                  contentStyle={{ backgroundColor: '#18181b', borderColor: '#27272a', color: '#fff', borderRadius: '8px', padding: '8px' }}
+                  itemStyle={{ paddingBottom: '2px', fontSize: '10px' }}
+                  formatter={(value: any, name: any) => [`$${Number(value).toFixed(0)}`, name]}
                 />
-                <Legend verticalAlign="top" height={40} iconType="circle" wrapperStyle={{ color: '#a1a1aa', fontSize: '14px', paddingBottom: '10px' }} />
-                <Bar dataKey="income" name="Income" fill="#22c55e" radius={[4, 4, 0, 0]} barSize={16} />
-                <Bar dataKey="expense" name="Expense" fill="#f97316" radius={[4, 4, 0, 0]} barSize={16} />
-                <Line type="monotone" dataKey="net" name="Net Flow" stroke="#a855f7" strokeWidth={3} dot={{ r: 4, fill: '#a855f7', strokeWidth: 2, stroke: '#18181b' }} />
+                <Legend verticalAlign="top" height={36} iconType="circle" wrapperStyle={{ color: '#a1a1aa', fontSize: '11px', paddingBottom: '8px' }} />
+                <Bar dataKey="income" name="Income" fill="#22c55e" radius={[3, 3, 0, 0]} barSize={14} />
+                <Bar dataKey="expense" name="Expense" fill="#f97316" radius={[3, 3, 0, 0]} barSize={14} />
+                <Line type="monotone" dataKey="net" name="Net Flow" stroke="#a855f7" strokeWidth={2} dot={{ r: 3, fill: '#a855f7', strokeWidth: 1.5, stroke: '#18181b' }} />
               </ComposedChart>
             </ResponsiveContainer>
           ) : (
-            <div className="h-full flex items-center justify-center text-zinc-500">
-              No transactions recorded
+            <div className="h-full flex items-center justify-center text-zinc-500 animate-pulse">
+              {delayedMount ? 'No transactions recorded' : 'Loading analytics...'}
             </div>
           )}
         </div>
       </div>
 
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 relative transition-colors">
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 relative transition-colors min-w-0">
         <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-6">Spending by Category</h3>
-        <div className="h-72 relative">
+        <div className="h-72 w-full relative min-h-[288px]">
           {pieData.length > 0 ? (
             <>
               <div className="absolute top-0 left-0 w-full h-[calc(100%-36px)] flex items-center justify-center pointer-events-none z-10">
                 <span className="text-zinc-900 dark:text-white text-2xl font-bold">100%</span>
               </div>
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="99.9%" height="100%" key={`rc-pie-${mounted}`}>
                 <PieChart>
                   <Pie
                     data={pieData}

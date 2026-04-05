@@ -11,12 +11,12 @@ export function QuickLinks() {
   ];
 
   return (
-    <div className="flex items-center gap-1.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-1 rounded-full shadow-sm">
+    <div className="flex flex-wrap items-center gap-1.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-2 rounded-2xl sm:rounded-full shadow-sm overflow-hidden min-w-0">
       {links.map((link) => {
         const Icon = link.icon;
         return (
-          <Link 
-            key={link.name} 
+          <Link
+            key={link.name}
             href={link.href}
             className="flex items-center gap-2 px-3 py-1.5 rounded-full transition-all hover:bg-zinc-100 dark:hover:bg-zinc-800 group"
           >

@@ -64,6 +64,17 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
     setIsDatePickerOpen(false);
   };
 
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsVisible(true);
+    } else {
+      const timer = setTimeout(() => setIsVisible(false), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
   useEffect(() => {
     if (transaction) {
       setFormData({
@@ -82,7 +93,7 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
     }
   }, [transaction, isOpen]);
 
-  if (!isOpen) return null;
+  if (!isVisible) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,28 +117,34 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/30 dark:bg-black/60 backdrop-blur-sm px-4 transition-colors">
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl w-full max-w-md p-6 shadow-xl dark:shadow-2xl transition-colors">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center px-4 transition-all duration-300 ${
+      isOpen ? 'bg-zinc-900/30 dark:bg-black/60 backdrop-blur-sm pointer-events-auto' : 'bg-transparent backdrop-blur-0 pointer-events-none'
+    }`}>
+      <div 
+        className={`bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-md p-6 shadow-2xl transition-all duration-300 transform-gpu ${
+          isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4'
+        }`}
+      >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold text-zinc-900 dark:text-white transition-colors">
             {transaction ? 'Edit Transaction' : 'Add Transaction'}
           </h2>
-          <button onClick={onClose} className="text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors">
+          <button onClick={onClose} className="text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-all hover:rotate-90 duration-300">
             <X size={20} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1 transition-colors">Type</label>
-            <div className="grid grid-cols-2 gap-2">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-2">
+            <label className="block text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest transition-colors">Type</label>
+            <div className="grid grid-cols-2 gap-2 p-1 bg-zinc-100 dark:bg-black rounded-xl border border-zinc-200 dark:border-zinc-800">
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, type: 'Expense' })}
-                className={`py-2 px-4 rounded-lg text-sm font-medium border transition-colors ${
+                className={`py-2 px-4 rounded-lg text-sm font-semibold transition-all duration-300 ${
                   formData.type === 'Expense' 
-                    ? 'bg-orange-100 dark:bg-orange-500/20 border-orange-500 dark:border-orange-500/50 text-orange-600 dark:text-orange-400' 
-                    : 'bg-zinc-50 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                    ? 'bg-white dark:bg-zinc-800 text-orange-600 dark:text-orange-400 shadow-sm' 
+                    : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
                 }`}
               >
                 Expense
@@ -135,10 +152,10 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, type: 'Income' })}
-                className={`py-2 px-4 rounded-lg text-sm font-medium border transition-colors ${
+                className={`py-2 px-4 rounded-lg text-sm font-semibold transition-all duration-300 ${
                   formData.type === 'Income' 
-                    ? 'bg-green-100 dark:bg-green-500/20 border-green-500 dark:border-green-500/50 text-green-700 dark:text-green-400' 
-                    : 'bg-zinc-50 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                    ? 'bg-white dark:bg-zinc-800 text-green-600 dark:text-green-400 shadow-sm' 
+                    : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
                 }`}
               >
                 Income
@@ -146,47 +163,52 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1 transition-colors">Amount</label>
-            <input
-              type="number"
-              required
-              min="0.01"
-              step="0.01"
-              value={formData.amount}
-              onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-              className="w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2 text-zinc-900 dark:text-white focus:outline-none focus:border-green-500 transition-colors"
-              placeholder="0.00"
-            />
+          <div className="space-y-2">
+            <label className="block text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest transition-colors">Amount</label>
+            <div className="relative group">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-green-500 transition-colors font-semibold">$</span>
+              <input
+                type="number"
+                required
+                min="0.01"
+                step="0.01"
+                value={formData.amount}
+                onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                className="w-full bg-zinc-50 dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-xl pl-8 pr-4 py-3 text-zinc-900 dark:text-white focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all font-medium text-lg"
+                placeholder="0.00"
+              />
+            </div>
           </div>
 
-          <div ref={dropdownRef}>
-            <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1 transition-colors">Category</label>
+          <div ref={dropdownRef} className="space-y-2">
+            <label className="block text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest transition-colors">Category</label>
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className={`w-full bg-white dark:bg-black border rounded-lg px-4 py-2 text-left transition-colors flex justify-between items-center ${
-                  isDropdownOpen ? 'border-green-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-green-500'
+                className={`w-full bg-zinc-50 dark:bg-black border rounded-xl px-4 py-3 text-left transition-all flex justify-between items-center group ${
+                  isDropdownOpen ? 'border-green-500 ring-4 ring-green-500/10' : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
                 }`}
               >
                 {formData.category ? (
-                  <span className="text-zinc-900 dark:text-white transition-colors">{formData.category}</span>
+                  <span className="text-zinc-900 dark:text-white font-medium transition-colors">{formData.category}</span>
                 ) : (
-                  <span className="text-zinc-500">Select a category</span>
+                  <span className="text-zinc-400">Select a category</span>
                 )}
-                <ChevronDown size={16} className={`text-zinc-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown size={16} className={`text-zinc-400 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
-              {isDropdownOpen && (
-                <ul className="absolute z-20 w-full mt-2 bg-white dark:bg-[#0a0a0a] border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-xl dark:shadow-2xl overflow-hidden overflow-y-auto max-h-48 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              <div className={`absolute z-20 w-full mt-2 bg-white dark:bg-[#0a0a0a] border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl overflow-hidden transition-all duration-300 transform-gpu origin-top ${
+                isDropdownOpen ? 'opacity-100 scale-100 translate-y-0 visible' : 'opacity-0 scale-95 -translate-y-2 invisible'
+              }`}>
+                <ul className="overflow-y-auto max-h-48 p-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                   {(formData.type === 'Expense' 
                     ? ['Groceries', 'Utilities', 'Entertainment', 'Transport', 'Shopping', 'Dining'] 
                     : ['Salary', 'Freelance', 'Investments', 'Other']
                   ).map((option) => {
                     const isSelected = formData.category === option;
-                    const hoverColor = formData.type === 'Expense' ? 'hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-500/10' : 'hover:text-green-600 dark:hover:text-green-400 hover:bg-green-50 dark:hover:bg-green-500/10';
-                    const activeColor = formData.type === 'Expense' ? 'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10' : 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10';
+                    const hoverColor = formData.type === 'Expense' ? 'hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400' : 'hover:bg-green-500/10 hover:text-green-600 dark:hover:text-green-400';
+                    const activeColor = formData.type === 'Expense' ? 'bg-orange-500 dark:bg-orange-600 text-white dark:text-black font-bold' : 'bg-green-500 dark:bg-green-600 text-white dark:text-black font-bold';
 
                     return (
                       <li
@@ -195,8 +217,8 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
                           setFormData({ ...formData, category: option });
                           setIsDropdownOpen(false);
                         }}
-                        className={`px-4 py-2.5 text-sm cursor-pointer transition-colors ${
-                          isSelected ? activeColor + ' font-medium' : 'text-zinc-600 dark:text-zinc-300 ' + hoverColor
+                        className={`px-3 py-2.5 text-sm cursor-pointer rounded-lg transition-all m-0.5 ${
+                          isSelected ? activeColor : 'text-zinc-600 dark:text-zinc-400 ' + hoverColor
                         }`}
                       >
                         {option}
@@ -204,68 +226,68 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
                     );
                   })}
                 </ul>
-              )}
+              </div>
             </div>
           </div>
 
-          <div ref={datePickerRef}>
-            <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1 transition-colors">Date</label>
+          <div ref={datePickerRef} className="space-y-2">
+            <label className="block text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest transition-colors">Date</label>
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
-                className={`w-full bg-white dark:bg-black border rounded-lg px-4 py-2 text-left transition-colors flex justify-between items-center ${
-                  isDatePickerOpen ? 'border-green-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-green-500'
+                className={`w-full bg-zinc-50 dark:bg-black border rounded-xl px-4 py-3 text-left transition-all flex justify-between items-center ${
+                  isDatePickerOpen ? 'border-green-500 ring-4 ring-green-500/10' : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
                 }`}
               >
-                <span className="text-zinc-900 dark:text-white transition-colors">{formData.date}</span>
-                <CalendarIcon size={16} className="text-zinc-500" />
+                <span className="text-zinc-900 dark:text-white font-medium transition-colors">{formData.date}</span>
+                <CalendarIcon size={16} className="text-zinc-400" />
               </button>
 
-              {isDatePickerOpen && (
-                <div className="absolute z-20 w-72 mt-2 p-4 bg-white dark:bg-[#0a0a0a] border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-xl dark:shadow-2xl -top-80 sm:-top-auto right-0 sm:right-auto transition-colors">
-                  <div className="flex justify-between items-center mb-4">
-                    <button type="button" onClick={handlePrevMonth} className="p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg text-zinc-500 dark:text-zinc-400 transition-colors"><ChevronLeft size={18}/></button>
-                    <span className="text-sm font-semibold text-zinc-900 dark:text-white tracking-wide transition-colors">
-                      {currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}
-                    </span>
-                    <button type="button" onClick={handleNextMonth} className="p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg text-zinc-500 dark:text-zinc-400 transition-colors"><ChevronRight size={18}/></button>
-                  </div>
-                  
-                  <div className="grid grid-cols-7 gap-1 text-center mb-2">
-                    {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
-                      <div key={d} className="text-[10px] font-bold text-zinc-500 uppercase">{d}</div>
-                    ))}
-                  </div>
-                  
-                  <div className="grid grid-cols-7 gap-1 text-center text-sm">
-                    {generateCalendarDays.map((day, i) => {
-                      if (!day) return <div key={`empty-${i}`} className="p-1.5" />;
-                      
-                      const d = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
-                      const tzOffset = d.getTimezoneOffset() * 60000;
-                      const iso = new Date(d.getTime() - tzOffset).toISOString().split('T')[0];
-                      const isSelected = formData.date === iso;
-                      
-                      const themeColor = formData.type === 'Expense' ? 'bg-orange-500 text-white dark:text-black font-bold' : 'bg-green-500 text-white dark:text-black font-bold';
-                      const hoverColor = formData.type === 'Expense' ? 'hover:bg-orange-50 dark:hover:bg-orange-500/20 hover:text-orange-600 dark:hover:text-orange-400' : 'hover:bg-green-50 dark:hover:bg-green-500/20 hover:text-green-600 dark:hover:text-green-400';
-
-                      return (
-                        <button
-                          key={day}
-                          type="button"
-                          onClick={() => handleSelectDate(day)}
-                          className={`p-1.5 rounded-lg transition-colors focus:outline-none ${
-                            isSelected ? themeColor : `text-zinc-700 dark:text-zinc-300 ${hoverColor}`
-                          }`}
-                        >
-                          {day}
-                        </button>
-                      );
-                    })}
-                  </div>
+              <div className={`absolute z-20 w-72 mt-2 p-4 bg-white dark:bg-[#0a0a0a] border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl -top-80 sm:-top-auto right-0 sm:right-auto transition-all duration-300 transform-gpu origin-top-right ${
+                isDatePickerOpen ? 'opacity-100 scale-100 translate-y-0 visible' : 'opacity-0 scale-95 -translate-y-2 invisible'
+              }`}>
+                <div className="flex justify-between items-center mb-4">
+                  <button type="button" onClick={handlePrevMonth} className="p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg text-zinc-500 dark:text-zinc-400 transition-colors"><ChevronLeft size={18}/></button>
+                  <span className="text-sm font-bold text-zinc-900 dark:text-white tracking-wide transition-colors">
+                    {currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}
+                  </span>
+                  <button type="button" onClick={handleNextMonth} className="p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg text-zinc-500 dark:text-zinc-400 transition-colors"><ChevronRight size={18}/></button>
                 </div>
-              )}
+                
+                <div className="grid grid-cols-7 gap-1 text-center mb-2">
+                  {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
+                    <div key={d} className="text-[10px] font-bold text-zinc-400 uppercase tracking-tighter">{d}</div>
+                  ))}
+                </div>
+                
+                <div className="grid grid-cols-7 gap-1 text-center text-sm">
+                  {generateCalendarDays.map((day, i) => {
+                    if (!day) return <div key={`empty-${i}`} className="p-1.5" />;
+                    
+                    const d = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
+                    const tzOffset = d.getTimezoneOffset() * 60000;
+                    const iso = new Date(d.getTime() - tzOffset).toISOString().split('T')[0];
+                    const isSelected = formData.date === iso;
+                    
+                    const themeColor = formData.type === 'Expense' ? 'bg-orange-500 text-white font-bold' : 'bg-green-500 text-white font-bold';
+                    const hoverColor = formData.type === 'Expense' ? 'hover:bg-orange-500/10 hover:text-orange-600' : 'hover:bg-green-500/10 hover:text-green-600';
+
+                    return (
+                      <button
+                        key={day}
+                        type="button"
+                        onClick={() => handleSelectDate(day)}
+                        className={`p-1.5 rounded-lg transition-all focus:outline-none text-xs ${
+                          isSelected ? themeColor : `text-zinc-600 dark:text-zinc-400 ${hoverColor}`
+                        }`}
+                      >
+                        {day}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -273,14 +295,14 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-900 dark:text-white font-medium py-2 px-4 rounded-lg transition-colors"
+              className="flex-1 bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-900 dark:text-white font-bold py-3 px-4 rounded-xl transition-all active:scale-95"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className={`flex-1 text-white dark:text-black font-semibold py-2 px-4 rounded-lg flex items-center justify-center transition-colors ${
-                formData.type === 'Expense' ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-500 hover:bg-green-600'
+              className={`flex-1 text-white dark:text-black font-bold py-3 px-4 rounded-xl flex items-center justify-center transition-all active:scale-95 shadow-lg ${
+                formData.type === 'Expense' ? 'bg-orange-500 hover:bg-orange-600 shadow-orange-500/20' : 'bg-green-500 hover:bg-green-600 shadow-green-500/20'
               }`}
             >
               <Save size={18} className="mr-2" />
