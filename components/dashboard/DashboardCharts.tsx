@@ -2,12 +2,12 @@
 
 import { useAppSelector } from '@/store/hooks';
 import { useMemo } from 'react';
-import { 
+import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
   PieChart, Pie, Cell, Legend
 } from 'recharts';
 
-const COLORS = ['#22c55e', '#f97316', '#eab308', '#3b82f6', '#ef4444', '#a855f7'];
+const COLORS = ['#22c55e', '#f8590aff', '#eab308', '#3b82f6', '#ef4444', '#a855f7'];
 
 export function DashboardCharts() {
   const transactions = useAppSelector((state) => state.finance.transactions);
@@ -19,16 +19,16 @@ export function DashboardCharts() {
     transactions.forEach(t => {
       const date = new Date(t.date);
       const monthYear = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }); // e.g. "Jan 2024"
-      
+
       if (!dataByMonth[monthYear]) {
         // Store a timestamp for accurate chronological sorting
-        dataByMonth[monthYear] = { 
-          income: 0, 
-          expense: 0, 
-          timestamp: new Date(date.getFullYear(), date.getMonth(), 1).getTime() 
+        dataByMonth[monthYear] = {
+          income: 0,
+          expense: 0,
+          timestamp: new Date(date.getFullYear(), date.getMonth(), 1).getTime()
         };
       }
-      
+
       if (t.type === 'Income') {
         dataByMonth[monthYear].income += t.amount;
       } else {
@@ -45,7 +45,7 @@ export function DashboardCharts() {
   const pieData = useMemo(() => {
     const expenses = transactions.filter(t => t.type === 'Expense');
     const byCategory: Record<string, number> = {};
-    
+
     expenses.forEach(t => {
       byCategory[t.category] = (byCategory[t.category] || 0) + t.amount;
     });
@@ -59,13 +59,13 @@ export function DashboardCharts() {
   const renderCustomizedLabel = (props: any) => {
     const { cx, cy, midAngle, outerRadius, percent } = props;
     const RADIAN = Math.PI / 180;
-    
+
     // Position it exactly on the outer edge edge
     const x = cx + outerRadius * Math.cos(-midAngle * RADIAN);
     const y = cy + outerRadius * Math.sin(-midAngle * RADIAN);
-  
+
     if (percent < 0.02) return null; // hide very tiny percentages
-  
+
     return (
       <g>
         <circle cx={x} cy={y} r={18} fill="#27272a" stroke="none" />
@@ -87,9 +87,9 @@ export function DashboardCharts() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
                 <XAxis dataKey="date" stroke="#a1a1aa" fontSize={12} tickLine={false} axisLine={false} tickMargin={10} />
                 <YAxis stroke="#a1a1aa" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `$${val}`} />
-                <Tooltip 
+                <Tooltip
                   cursor={{ fill: '#27272a', opacity: 0.4 }}
-                  contentStyle={{ backgroundColor: '#18181b', borderColor: '#27272a', color: '#fff', borderRadius: '8px', padding: '12px' }} 
+                  contentStyle={{ backgroundColor: '#18181b', borderColor: '#27272a', color: '#fff', borderRadius: '8px', padding: '12px' }}
                   itemStyle={{ paddingBottom: '4px' }}
                   formatter={(value: any, name: any) => [`$${Number(value).toFixed(2)}`, name]}
                 />
