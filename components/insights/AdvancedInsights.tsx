@@ -8,7 +8,7 @@ import {
   ComposedChart, Bar, Line, Legend
 } from 'recharts';
 
-const COLORS = ['#22c55e', '#f8590aff', '#eab308', '#3b82f6', '#ef4444', '#a855f7'];
+const COLORS = ['#22c55e', '#f9661dff', '#eab308', '#3b82f6', '#9d0505ff', '#a855f7'];
 
 export function AdvancedInsights() {
   const transactions = useAppSelector((state) => state.finance.transactions);
@@ -37,7 +37,7 @@ export function AdvancedInsights() {
     });
 
     let cumulativeSavings = 0;
-    
+
     return Object.entries(dataByMonth)
       .map(([month, data]) => ({ date: month, income: data.income, expense: data.expense, timestamp: data.timestamp }))
       .sort((a, b) => a.timestamp - b.timestamp)
@@ -70,7 +70,7 @@ export function AdvancedInsights() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-      
+
       {/* Settings Trend Area Chart */}
       <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 lg:col-span-2 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/10 dark:hover:shadow-blue-500/10 hover:border-blue-500/30 group">
         <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-2 transition-colors">Net Savings Trend</h3>
@@ -125,7 +125,7 @@ export function AdvancedInsights() {
               </ComposedChart>
             </ResponsiveContainer>
           ) : (
-             <div className="h-full flex items-center justify-center text-zinc-500">No data available</div>
+            <div className="h-full flex items-center justify-center text-zinc-500">No data available</div>
           )}
         </div>
       </div>
@@ -137,13 +137,19 @@ export function AdvancedInsights() {
         <div className="h-80">
           {radarData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
-                <PolarGrid stroke="#27272a" />
-                <PolarAngleAxis dataKey="category" tick={{ fill: '#a1a1aa', fontSize: 11 }} />
+              <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
+                <defs>
+                  <linearGradient id="colorRadar" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1} />
+                  </linearGradient>
+                </defs>
+                <PolarGrid stroke="#71717a" strokeOpacity={0.3} gridType="circle" />
+                <PolarAngleAxis dataKey="category" tick={{ fill: '#71717a', fontSize: 12, fontWeight: 500 }} />
                 <PolarRadiusAxis angle={30} domain={[0, 'auto']} tick={false} axisLine={false} />
-                <Radar name="Spending" dataKey="amount" stroke="#ef4444" strokeWidth={2} fill="#ef4444" fillOpacity={0.3} />
+                <Radar name="Spending" dataKey="amount" stroke="#ef4444" strokeWidth={3} fill="url(#colorRadar)" fillOpacity={1} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#18181b', borderColor: '#27272a', color: '#fff', borderRadius: '8px' }}
+                  contentStyle={{ backgroundColor: '#18181b', borderColor: '#27272a', color: '#fff', borderRadius: '8px', padding: '12px' }}
                   formatter={(value: any) => [`$${Number(value).toFixed(2)}`, 'Spent']}
                 />
               </RadarChart>

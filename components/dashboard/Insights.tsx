@@ -25,7 +25,7 @@ export function Insights() {
       } else {
         totalExpense += t.amount;
         expenseByCategory[t.category] = (expenseByCategory[t.category] || 0) + t.amount;
-        
+
         if (t.amount > maxSingleExpense.amount) {
           maxSingleExpense = { amount: t.amount, category: t.category, date: t.date };
         }
@@ -82,7 +82,7 @@ export function Insights() {
         </div>
         <div>
           <h4 className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider">Monthly Avg</h4>
-          <p className="text-lg font-bold text-zinc-900 dark:text-white mt-1 leading-snug">${insights.avgMonthlyExpense.toLocaleString('en-US', {maximumFractionDigits: 0})}</p>
+          <p className="text-lg font-bold text-zinc-900 dark:text-white mt-1 leading-snug">${insights.avgMonthlyExpense.toLocaleString('en-US', { maximumFractionDigits: 0 })}</p>
           <p className="text-xs text-zinc-500 mt-1">Based on {insights.numMonths} months</p>
         </div>
       </div>

@@ -11,7 +11,7 @@ const navItems = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Transactions', href: '/transactions', icon: ReceiptText },
   { name: 'Insights', href: '/insights', icon: TrendingUp },
-  { name: 'AI Suggestions', href: '/suggestions', icon: Sparkles },
+  { name: 'ZorAI Suggestions', href: '/suggestions', icon: Sparkles },
 ];
 
 export function Sidebar() {
@@ -31,8 +31,8 @@ export function Sidebar() {
               href={item.href}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-sm font-medium",
-                isActive 
-                  ? "bg-emerald-50 dark:bg-zinc-900 text-emerald-600 dark:text-green-400 border border-green-500/20" 
+                isActive
+                  ? "bg-emerald-50 dark:bg-zinc-900 text-emerald-600 dark:text-green-400 border border-green-500/20"
                   : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-800"
               )}
             >
@@ -57,11 +57,10 @@ export function Sidebar() {
             <button
               key={r}
               onClick={() => dispatch(setRole(r))}
-              className={`flex-1 py-1.5 px-2 text-xs font-medium rounded-md transition-colors ${
-                role === r
+              className={`flex-1 py-1.5 px-2 text-xs font-medium rounded-md transition-colors ${role === r
                   ? 'bg-zinc-300 dark:bg-zinc-700 text-black dark:text-white shadow-sm'
                   : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
-              }`}
+                }`}
             >
               {r}
             </button>
