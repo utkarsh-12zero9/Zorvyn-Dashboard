@@ -2,8 +2,10 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, ReceiptText, TrendingUp, Sparkles } from 'lucide-react';
+import { LayoutDashboard, ReceiptText, TrendingUp, Sparkles, UserCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { setRole, Role } from '@/store/slices/financeSlice';
 
 const navItems = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
@@ -14,15 +16,12 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const dispatch = useAppDispatch();
+  const role = useAppSelector((state) => state.finance.role);
 
   return (
-    <div className="w-64 border-r border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-black h-screen sticky top-0 flex flex-col transition-colors">
-      <div className="p-6">
-        <h1 className="text-2xl font-bold text-emerald-600 dark:text-green-500">
-          Zorvyn.
-        </h1>
-      </div>
-      <nav className="flex-1 px-4 space-y-2 mt-4">
+    <div className="w-64 border-r border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-black h-full flex flex-col transition-colors">
+      <nav className="flex-1 px-4 space-y-2 mt-6">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -43,8 +42,31 @@ export function Sidebar() {
           );
         })}
       </nav>
-      <div className="p-4 border-t border-zinc-200 dark:border-zinc-800 text-xs text-zinc-500 dark:text-zinc-500 text-center transition-colors">
-        Finance Dashboard UI
+      <div className="p-4 border-t border-zinc-200 dark:border-zinc-800 flex flex-col gap-4 transition-colors">
+        <div className="flex items-center gap-3 text-zinc-700 dark:text-zinc-300">
+          <UserCircle2 size={36} className={role === 'Admin' ? 'text-orange-500 dark:text-orange-400' : 'text-zinc-500 dark:text-zinc-400'} />
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">{role === 'Admin' ? 'Administrator' : 'Guest Viewer'}</span>
+            <span className="text-[10px] text-zinc-500">zorvyn@finance.app</span>
+          </div>
+        </div>
+
+        {/* Role Toggle */}
+        <div className="flex items-center bg-zinc-100 dark:bg-zinc-900 rounded-lg p-1 border border-zinc-200 dark:border-zinc-800 transition-colors w-full">
+          {(['Viewer', 'Admin'] as Role[]).map((r) => (
+            <button
+              key={r}
+              onClick={() => dispatch(setRole(r))}
+              className={`flex-1 py-1.5 px-2 text-xs font-medium rounded-md transition-colors ${
+                role === r
+                  ? 'bg-zinc-300 dark:bg-zinc-700 text-black dark:text-white shadow-sm'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
+              }`}
+            >
+              {r}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
