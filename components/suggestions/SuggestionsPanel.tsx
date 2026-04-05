@@ -2,7 +2,10 @@
 
 import { useAppSelector } from '@/store/hooks';
 import { useMemo } from 'react';
-import { Zap, Sparkles, Sprout, BrainCircuit } from 'lucide-react';
+import { 
+  Zap, Sprout, BrainCircuit, LineChart, Home, ShieldCheck, 
+  Bot, PieChart, Cpu, Coins, TrendingUp, Sparkles, Building, Briefcase 
+} from 'lucide-react';
 
 export function SuggestionsPanel() {
   const transactions = useAppSelector((state) => state.finance.transactions);
@@ -21,7 +24,6 @@ export function SuggestionsPanel() {
     
     const months = new Set(transactions.map(t => t.date.substring(0, 7)));
     const numMonths = Math.max(1, months.size);
-    
     const avgMonthlySurplus = (totalIncome - totalExpense) / numMonths;
 
     // --- 1. SAVE MORE ---
@@ -34,34 +36,52 @@ export function SuggestionsPanel() {
     });
 
     const avgMonthlyDiscretionary = topDiscretionary.amount / numMonths;
-    const saveMoreTarget = avgMonthlyDiscretionary * 0.15; // 15% cut
+    const saveMoreTarget = avgMonthlyDiscretionary * 0.15;
 
-    // --- 2. INVEST SOMEWHERE ---
-    let investmentSuggestions = [];
-    if (avgMonthlySurplus > 2000) {
-      investmentSuggestions = [
-        { name: "S&P 500 Index Funds (VOO, SPY)", reason: "Low-cost, broad market exposure for long-term compounding." },
-        { name: "Real Estate Investment Trusts (REITs)", reason: "Diversify your portfolio into real estate without direct property management." },
-        { name: "Blue-Chip Tech Stocks", reason: "Higher yield potential through established, dominant market players." }
-      ];
-    } else if (avgMonthlySurplus > 500) {
-      investmentSuggestions = [
-        { name: "Robo-Advisors Accounts", reason: "Automated, hands-off portfolio management perfectly tailored to your risk tolerance." },
-        { name: "Total Market ETFs (VTI)", reason: "Simple, single-fund diversification across the entire US stock market." },
-        { name: "High-Yield Savings / CDs", reason: "Virtually risk-free returns to protect your capital from inflation while staying liquid." }
-      ];
-    } else {
-      investmentSuggestions = [
-        { name: "High-Yield Savings (HYSA)", reason: "Risk-free returns to help you safely build up a 3-6 month emergency fund." },
-        { name: "Fractional Shares", reason: "Invest in high-value companies with whatever small amounts you have available." },
-        { name: "Micro-Investing (e.g. Acorns)", reason: "Automatically invest spare change from everyday purchases without feeling it." }
-      ];
+    // --- 2. INVEST SOMEWHERE (Data-Driven Dynamic Pool) ---
+    const investmentPool = [
+      { name: "S&P 500 Index", reason: "Broad market compounding.", icon: LineChart, min: 500, triggerCat: 'any' },
+      { name: "High-Yield Savings", reason: "Risk-free liquid returns.", icon: ShieldCheck, min: 0, triggerCat: 'any' },
+      { name: "Real Estate (REITs)", reason: "Diversify into properties.", icon: Home, min: 1000, triggerCat: 'any' },
+      { name: "Robo-Advisors", reason: "Automated portfolio management.", icon: Bot, min: 200, triggerCat: 'any' },
+      { name: "Fractional Shares", reason: "Micro-invest in big tech.", icon: PieChart, min: 0, triggerCat: 'any' },
+      { name: "Blue-Chip Tech", reason: "Established tech dominants.", icon: Cpu, min: 1500, triggerCat: 'Shopping' },
+      { name: "Dividend Aristocrats", reason: "Stable dividend payouts.", icon: Coins, min: 800, triggerCat: 'any' },
+      { name: "Consumer Staples ETFs", reason: "Hedge against inflation.", icon: Building, min: 100, triggerCat: 'Groceries' },
+      { name: "Energy/Utilities ETFs", reason: "Capitalize on utility sectors.", icon: Zap, min: 500, triggerCat: 'Utilities' },
+      { name: "Corporate Bonds", reason: "Fixed-income securities.", icon: Briefcase, min: 1000, triggerCat: 'any' }
+    ];
+
+    // Filter available investments based on surplus capacity
+    let availableInvestments = investmentPool.filter(i => avgMonthlySurplus >= i.min);
+    if (availableInvestments.length === 0) {
+      availableInvestments = investmentPool.filter(i => i.min === 0);
     }
 
+    // Sort by relevance to their top spending category, then by a pseudo-random hash of their total expense 
+    // This makes it dynamic to their actual data state, but stable for that state.
+    availableInvestments.sort((a, b) => {
+      const aMatch = a.triggerCat === topDiscretionary.category ? 1 : 0;
+      const bMatch = b.triggerCat === topDiscretionary.category ? 1 : 0;
+      if (aMatch !== bMatch) return bMatch - aMatch;
+      
+      // Pseudo-random based on data volume so it changes if they add/remove transactions
+      const hashA = (a.name.length * totalExpense) % 100;
+      const hashB = (b.name.length * totalExpense) % 100;
+      return hashB - hashA;
+    });
+
+    const investmentSuggestions = availableInvestments.slice(0, 3);
+
     // --- 3. SPEND MORE SECTOR ---
-    const mindfulCategories = ['Health & Wellness', 'Education & Courses', 'Travel & Experiences', 'Charity', 'Home Improvement'];
-    // Just select 2 random mindful categories for suggestions to make it feel dynamic
-    const suggestions = mindfulCategories.sort(() => 0.5 - Math.random()).slice(0, 2);
+    const mindfulCategories = ['Health & Wellness', 'Education & Courses', 'Travel & Experiences', 'Charity'];
+    const activeCategories = Object.keys(expenseByCategory);
+    
+    // Suggest sectors they barely spend on
+    const unusedMindful = mindfulCategories.filter(c => !activeCategories.includes(c));
+    // Use data-hash to pick them consistently but dynamically
+    const suggestions = unusedMindful.length >= 2 ? unusedMindful : mindfulCategories;
+    const finalSpendMore = suggestions.sort((a, b) => ((a.length * totalExpense) % 10) - ((b.length * totalExpense) % 10)).slice(0, 2);
 
     return {
       avgMonthlySurplus,
@@ -69,7 +89,7 @@ export function SuggestionsPanel() {
       avgMonthlyDiscretionary,
       saveMoreTarget,
       investmentSuggestions,
-      spendMoreSuggestions: suggestions
+      spendMoreSuggestions: finalSpendMore
     };
 
   }, [transactions]);
@@ -77,86 +97,105 @@ export function SuggestionsPanel() {
   if (!insights) return null;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
-          <BrainCircuit className="text-indigo-400" size={28} />
+    <div className="space-y-8 relative">
+      {/* Ambient background glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-64 bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none" />
+
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10 bg-zinc-900/50 backdrop-blur-xl border border-zinc-800/50 p-6 rounded-2xl shadow-2xl">
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <div className="absolute inset-0 bg-indigo-500 blur-lg opacity-40 animate-pulse" />
+            <div className="relative p-3 bg-zinc-900 border border-indigo-500/50 rounded-xl">
+              <BrainCircuit className="text-indigo-400" size={28} />
+            </div>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-300 via-purple-300 to-fuchsia-300 bg-clip-text text-transparent">
+              AI Financial Engine
+            </h2>
+            <p className="text-sm text-zinc-400 mt-1">Synthesizing your transaction genome into actionable directives.</p>
+          </div>
         </div>
-        <div>
-          <h2 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">AI Financial Engine</h2>
-          <p className="text-sm text-zinc-400">Synthesizing your transaction genome into actionable strategies.</p>
+        <div className="flex items-center gap-2 px-4 py-2 bg-indigo-500/10 text-indigo-300 rounded-full text-xs font-semibold border border-indigo-500/20">
+          <Sparkles size={14} /> Synchronized
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-10">
         
         {/* Suggestion 1: Save More */}
-        <div className="relative overflow-hidden bg-zinc-900 border border-zinc-800 rounded-2xl p-6 group hover:border-indigo-500/50 transition-all duration-500">
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          <div className="flex items-start gap-4 relative z-10">
-            <div className="p-3 bg-zinc-950 border border-indigo-500/30 rounded-xl shadow-[0_0_15px_rgba(99,102,241,0.2)]">
-              <Zap className="text-indigo-400" size={22} />
+        <div className="relative overflow-hidden bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-3xl p-8 group hover:-translate-y-1 hover:border-indigo-500/40 hover:shadow-[0_8px_30px_rgb(99,102,241,0.1)] transition-all duration-300">
+          <div className="flex items-start gap-5">
+            <div className="p-4 bg-zinc-950 border border-indigo-500/20 rounded-2xl group-hover:border-indigo-500/50 transition-colors">
+              <Zap className="text-indigo-400" size={26} />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-white mb-2">Optimization Protocol: Save More</h3>
+              <h3 className="text-xl font-bold text-white mb-3">Optimization Protocol: Save More</h3>
               {insights.topDiscretionaryCategory !== 'None' && insights.avgMonthlyDiscretionary > 0 ? (
-                <p className="text-zinc-400 text-sm leading-relaxed">
-                  My analysis indicates that <strong className="text-zinc-200">{insights.topDiscretionaryCategory}</strong> is your highest discretionary expense, averaging <strong className="text-zinc-200">${insights.avgMonthlyDiscretionary.toFixed(0)}/mo</strong>. 
-                  <br className="my-2" />
-                  If you strategically cut this category by just <span className="text-indigo-400 font-medium">15%</span>, you could save an extra <span className="text-green-400 font-bold">${insights.saveMoreTarget.toFixed(0)}</span> every month without significantly impacting your lifestyle.
+                <p className="text-zinc-400 leading-relaxed">
+                  My analysis traces your highest flexible expenditure to <span className="text-zinc-200 font-medium px-2 py-0.5 bg-zinc-800 rounded-md">{insights.topDiscretionaryCategory}</span>, averaging <span className="text-zinc-200 font-medium">${insights.avgMonthlyDiscretionary.toFixed(0)}/mo</span>. 
+                  <br className="my-3" />
+                  Strategically shaving this by just <span className="text-indigo-400 font-semibold">15%</span> will yield an extra <span className="text-green-400 font-bold bg-green-400/10 px-2 py-0.5 rounded-md">${insights.saveMoreTarget.toFixed(0)}</span> in monthly liquidity.
                 </p>
               ) : (
-                <p className="text-zinc-400 text-sm leading-relaxed">Your discretionary spending is already hyper-optimized. Keep maintaining your current frugal baseline.</p>
+                <p className="text-zinc-400 leading-relaxed">Your discretionary spending is highly optimized. Maintain this frugal baseline for maximum capital accumulation.</p>
               )}
             </div>
           </div>
         </div>
 
         {/* Suggestion 2: Spend More / Well-being */}
-        <div className="relative overflow-hidden bg-zinc-900 border border-zinc-800 rounded-2xl p-6 group hover:border-fuchsia-500/50 transition-all duration-500">
-          <div className="absolute inset-0 bg-gradient-to-br from-fuchsia-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          <div className="flex items-start gap-4 relative z-10">
-            <div className="p-3 bg-zinc-950 border border-fuchsia-500/30 rounded-xl shadow-[0_0_15px_rgba(217,70,239,0.2)]">
-              <Sprout className="text-fuchsia-400" size={22} />
+        <div className="relative overflow-hidden bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-3xl p-8 group hover:-translate-y-1 hover:border-fuchsia-500/40 hover:shadow-[0_8px_30px_rgb(217,70,239,0.1)] transition-all duration-300">
+          <div className="flex items-start gap-5">
+            <div className="p-4 bg-zinc-950 border border-fuchsia-500/20 rounded-2xl group-hover:border-fuchsia-500/50 transition-colors">
+              <Sprout className="text-fuchsia-400" size={26} />
             </div>
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-2">Mindful Allocation</h3>
-              <p className="text-zinc-400 text-sm leading-relaxed">
-                Financial health isn't just about hoarding wealth—it's about quality of life. Based on missing data in your spending genome, consider allocating a portion of your surplus to:
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-white mb-3">Mindful Allocation</h3>
+              <p className="text-zinc-400 leading-relaxed mb-5">
+                Financial health encompasses holistic well-being. The data genome reveals an under-investment in personal growth sectors. Consider allocating surplus to:
               </p>
-              <ul className="mt-4 space-y-2">
+              <div className="grid grid-cols-1 gap-3">
                 {insights.spendMoreSuggestions.map((suggestion, idx) => (
-                  <li key={idx} className="flex items-center gap-2 text-sm text-zinc-300">
-                    <span className="w-1.5 h-1.5 rounded-full bg-fuchsia-500/50" />
-                    {suggestion}
-                  </li>
+                  <div key={idx} className="flex items-center gap-3 p-3 bg-zinc-950/50 border border-zinc-800 rounded-xl">
+                    <div className="w-2 h-2 rounded-full bg-fuchsia-500 shadow-[0_0_8px_rgb(217,70,239)]" />
+                    <span className="text-sm font-medium text-zinc-300">{suggestion}</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Suggestion 3: Invest Somewhere */}
-        <div className="relative overflow-hidden bg-zinc-900 border border-zinc-800 rounded-2xl p-6 md:col-span-2 group hover:border-emerald-500/50 transition-all duration-500">
-          <div className="absolute top-0 right-0 p-32 bg-emerald-500/5 blur-[100px] rounded-full pointer-events-none" />
-          <div className="flex items-start gap-4 relative z-10">
-            <div className="p-3 bg-zinc-950 border border-emerald-500/30 rounded-xl shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-              <Sparkles className="text-emerald-400" size={22} />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold text-white mb-2">Wealth Generation Directives</h3>
-              <p className="text-zinc-400 text-sm leading-relaxed mb-6">
-                You have an estimated monthly operating surplus of <strong className="text-emerald-400 font-bold">${Math.max(0, insights.avgMonthlySurplus).toFixed(0)}</strong>. Letting this sit idle in a checking account exposes it to inflationary decay. Based on this volume, I recommend diversifying into these top 3 sectors:
+        {/* Suggestion 3: Wealth Generation */}
+        <div className="relative overflow-hidden bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-3xl p-8 lg:col-span-2 group hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-[0_8px_30px_rgb(16,185,129,0.1)] transition-all duration-300">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[80px] rounded-full pointer-events-none" />
+          
+          <div className="flex flex-col md:flex-row gap-6 lg:gap-10 relative z-10">
+            <div className="md:w-1/3">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="p-4 bg-zinc-950 border border-emerald-500/20 rounded-2xl group-hover:border-emerald-500/50 transition-colors">
+                  <TrendingUp className="text-emerald-400" size={26} />
+                </div>
+                <h3 className="text-xl font-bold text-white">Wealth Directives</h3>
+              </div>
+              <p className="text-zinc-400 leading-relaxed">
+                Estimated monthly surplus sits at <span className="text-emerald-400 font-bold bg-emerald-400/10 px-2 py-0.5 rounded-md">${Math.max(0, insights.avgMonthlySurplus).toFixed(0)}</span>. Based on your specific cashflow volume and expenditure categories, the AI recommends routing capital into these diversified vehicles to outpace inflation.
               </p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {insights.investmentSuggestions.map((inv, idx) => (
-                  <div key={idx} className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 hover:border-emerald-500/30 transition-colors">
-                    <h4 className="font-semibold text-zinc-200 text-sm mb-2">{inv.name}</h4>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-1">
+              {insights.investmentSuggestions.map((inv, idx) => {
+                const Icon = inv.icon;
+                return (
+                  <div key={idx} className="bg-zinc-950/80 border border-zinc-800/80 p-5 rounded-2xl hover:bg-zinc-900 hover:border-emerald-500/30 transition-all cursor-default">
+                    <Icon className="text-emerald-500 mb-4" size={24} />
+                    <h4 className="font-semibold text-zinc-100 mb-2">{inv.name}</h4>
                     <p className="text-xs text-zinc-500 leading-relaxed">{inv.reason}</p>
                   </div>
-                ))}
-              </div>
+                );
+              })}
             </div>
           </div>
         </div>
