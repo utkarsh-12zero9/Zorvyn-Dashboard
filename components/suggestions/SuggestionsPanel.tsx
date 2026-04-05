@@ -151,8 +151,8 @@ export function SuggestionsPanel() {
               </p>
               <div className="grid grid-cols-1 gap-3">
                 {insights.spendMoreSuggestions.map((suggestion, idx) => (
-                  <div key={idx} className="flex items-center gap-3 p-3 bg-zinc-50 dark:bg-zinc-950/50 border border-zinc-200 dark:border-zinc-800 rounded-xl transition-colors">
-                    <div className="w-2 h-2 rounded-full bg-fuchsia-500 shadow-[0_0_8px_rgb(217,70,239)] shrink-0" />
+                  <div key={idx} className="flex items-center gap-3 p-3 bg-zinc-50 dark:bg-zinc-950/50 border border-zinc-200 dark:border-zinc-800 rounded-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md hover:shadow-fuchsia-500/10 dark:hover:shadow-fuchsia-500/10 hover:border-fuchsia-500/30 cursor-default">
+                    <div className="w-2 h-2 rounded-full bg-fuchsia-500 shadow-[0_0_8px_rgb(217,70,239)] shrink-0 group-hover:scale-125 transition-transform" />
                     <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300 transition-colors">{suggestion}</span>
                   </div>
                 ))}
@@ -182,8 +182,8 @@ export function SuggestionsPanel() {
               {insights.investmentSuggestions.map((inv, idx) => {
                 const Icon = inv.icon;
                 return (
-                  <div key={idx} className="bg-zinc-50 dark:bg-zinc-950/80 border border-zinc-200 dark:border-zinc-800/80 p-5 rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:border-emerald-500/30 transition-all cursor-default">
-                    <Icon className="text-emerald-500 mb-4" size={24} />
+                  <div key={idx} className="bg-zinc-50 dark:bg-zinc-950/80 border border-zinc-200 dark:border-zinc-800/80 p-5 rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-all duration-300 transform hover:-translate-y-1 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 dark:hover:shadow-emerald-500/10 cursor-default group/invest">
+                    <Icon className="text-emerald-500 mb-4 group-hover/invest:scale-110 transition-transform duration-300" size={24} />
                     <h4 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-2 transition-colors">{inv.name}</h4>
                     <p className="text-xs text-zinc-600 dark:text-zinc-500 leading-relaxed transition-colors">{inv.reason}</p>
                   </div>

@@ -3,7 +3,7 @@
 import { useAppSelector } from '@/store/hooks';
 import { useMemo } from 'react';
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
+  ComposedChart, BarChart, Bar, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
   PieChart, Pie, Cell, Legend
 } from 'recharts';
 
@@ -37,7 +37,13 @@ export function DashboardCharts() {
     });
 
     return Object.entries(dataByMonth)
-      .map(([month, data]) => ({ date: month, income: data.income, expense: data.expense, timestamp: data.timestamp }))
+      .map(([month, data]) => ({ 
+        date: month, 
+        income: data.income, 
+        expense: data.expense, 
+        net: data.income - data.expense,
+        timestamp: data.timestamp 
+      }))
       .sort((a, b) => a.timestamp - b.timestamp); // Sort sequentially
   }, [transactions]);
 
@@ -83,7 +89,7 @@ export function DashboardCharts() {
         <div className="h-72">
           {barData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={barData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }} barGap={8}>
+              <ComposedChart data={barData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }} barGap={8}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
                 <XAxis dataKey="date" stroke="#a1a1aa" fontSize={12} tickLine={false} axisLine={false} tickMargin={10} />
                 <YAxis stroke="#a1a1aa" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `$${val}`} />
@@ -96,7 +102,8 @@ export function DashboardCharts() {
                 <Legend verticalAlign="top" height={40} iconType="circle" wrapperStyle={{ color: '#a1a1aa', fontSize: '14px', paddingBottom: '10px' }} />
                 <Bar dataKey="income" name="Income" fill="#22c55e" radius={[4, 4, 0, 0]} barSize={16} />
                 <Bar dataKey="expense" name="Expense" fill="#f97316" radius={[4, 4, 0, 0]} barSize={16} />
-              </BarChart>
+                <Line type="monotone" dataKey="net" name="Net Flow" stroke="#a855f7" strokeWidth={3} dot={{ r: 4, fill: '#a855f7', strokeWidth: 2, stroke: '#18181b' }} />
+              </ComposedChart>
             </ResponsiveContainer>
           ) : (
             <div className="h-full flex items-center justify-center text-zinc-500">

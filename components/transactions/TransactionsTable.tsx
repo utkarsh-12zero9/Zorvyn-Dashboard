@@ -117,7 +117,7 @@ export function TransactionsTable({ onEdit }: { onEdit: (t: Transaction) => void
           <tbody>
             {processedTransactions.length > 0 ? (
               processedTransactions.map((tx) => (
-                <tr key={tx.id} className="border-b border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                <tr key={tx.id} className="group border-b border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors duration-200 cursor-default">
                   <td className="px-6 py-4 whitespace-nowrap text-zinc-600 dark:text-zinc-300 transition-colors">{tx.date}</td>
                   <td className="px-6 py-4 text-zinc-900 dark:text-white font-medium transition-colors">{tx.category}</td>
                   <td className="px-6 py-4">
@@ -133,11 +133,11 @@ export function TransactionsTable({ onEdit }: { onEdit: (t: Transaction) => void
                   {role === 'Admin' && (
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-3">
-                        <button className="text-zinc-500 hover:text-blue-500 dark:hover:text-blue-400 transition-colors" title="Edit" onClick={() => onEdit(tx)}>
+                        <button className="text-zinc-500 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200 hover:scale-110 active:scale-95" title="Edit" onClick={() => onEdit(tx)}>
                           <Edit size={18} />
                         </button>
                         <button 
-                          className="text-zinc-500 hover:text-red-500 dark:hover:text-red-400 transition-colors" 
+                          className="text-zinc-500 hover:text-red-500 dark:hover:text-red-400 transition-all duration-200 hover:scale-110 active:scale-95" 
                           title="Delete"
                           onClick={() => dispatch(deleteTransaction(tx.id))}
                         >
