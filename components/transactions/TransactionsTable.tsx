@@ -64,9 +64,9 @@ export function TransactionsTable({ onEdit }: { onEdit: (t: Transaction) => void
   };
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl flex flex-col mt-6">
+    <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl flex flex-col mt-6 transition-colors shadow-sm dark:shadow-none">
       {/* Table Header / Controls */}
-      <div className="p-4 border-b border-zinc-800 flex flex-col sm:flex-row gap-4 justify-between items-center bg-black/20 rounded-t-xl">
+      <div className="p-4 border-b border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row gap-4 justify-between items-center bg-zinc-50 dark:bg-black/20 rounded-t-xl transition-colors">
         <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" size={18} />
           <input
@@ -74,17 +74,17 @@ export function TransactionsTable({ onEdit }: { onEdit: (t: Transaction) => void
             placeholder="Search by category..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-zinc-900 border border-zinc-800 rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-green-500 transition-colors"
+            className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg pl-10 pr-4 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:border-green-500 transition-colors"
           />
         </div>
 
         <div className="flex items-center gap-4 w-full sm:w-auto">
-          <div className="flex items-center gap-2 text-sm text-zinc-400">
+          <div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400 font-medium">
             <Filter size={18} />
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 focus:outline-none focus:border-green-500 transition-colors"
+              className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-zinc-900 dark:text-white focus:outline-none focus:border-green-500 transition-colors"
             >
               <option value="All">All Types</option>
               <option value="Income">Income</option>
@@ -96,17 +96,17 @@ export function TransactionsTable({ onEdit }: { onEdit: (t: Transaction) => void
 
       {/* Table Content */}
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm text-zinc-400">
-          <thead className="text-xs text-zinc-500 uppercase bg-zinc-900/50 border-b border-zinc-800">
+        <table className="w-full text-left text-sm text-zinc-600 dark:text-zinc-400">
+          <thead className="text-xs text-zinc-500 uppercase bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800 transition-colors">
             <tr>
-              <th scope="col" className="px-6 py-4 cursor-pointer hover:text-green-400 transition-colors" onClick={() => handleSort('date')}>
+              <th scope="col" className="px-6 py-4 cursor-pointer hover:text-green-500 dark:hover:text-green-400 transition-colors" onClick={() => handleSort('date')}>
                 <div className="flex items-center gap-2">Date <ArrowUpDown size={14} /></div>
               </th>
               <th scope="col" className="px-6 py-4">Category</th>
-              <th scope="col" className="px-6 py-4 cursor-pointer hover:text-green-400 transition-colors" onClick={() => handleSort('type')}>
+              <th scope="col" className="px-6 py-4 cursor-pointer hover:text-green-500 dark:hover:text-green-400 transition-colors" onClick={() => handleSort('type')}>
                 <div className="flex items-center gap-2">Type <ArrowUpDown size={14} /></div>
               </th>
-              <th scope="col" className="px-6 py-4 cursor-pointer hover:text-green-400 transition-colors" onClick={() => handleSort('amount')}>
+              <th scope="col" className="px-6 py-4 cursor-pointer hover:text-green-500 dark:hover:text-green-400 transition-colors" onClick={() => handleSort('amount')}>
                 <div className="flex items-center gap-2">Amount <ArrowUpDown size={14} /></div>
               </th>
               {role === 'Admin' && (
@@ -117,27 +117,27 @@ export function TransactionsTable({ onEdit }: { onEdit: (t: Transaction) => void
           <tbody>
             {processedTransactions.length > 0 ? (
               processedTransactions.map((tx) => (
-                <tr key={tx.id} className="border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap text-zinc-300">{tx.date}</td>
-                  <td className="px-6 py-4 text-white font-medium">{tx.category}</td>
+                <tr key={tx.id} className="border-b border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-zinc-600 dark:text-zinc-300 transition-colors">{tx.date}</td>
+                  <td className="px-6 py-4 text-zinc-900 dark:text-white font-medium transition-colors">{tx.category}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-medium border ${
-                      tx.type === 'Income' ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-orange-500/10 text-orange-400 border-orange-500/20'
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${
+                      tx.type === 'Income' ? 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20' : 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20'
                     }`}>
                       {tx.type}
                     </span>
                   </td>
-                  <td className={`px-6 py-4 font-semibold ${tx.type === 'Income' ? 'text-green-400' : 'text-zinc-200'}`}>
+                  <td className={`px-6 py-4 font-semibold transition-colors ${tx.type === 'Income' ? 'text-green-600 dark:text-green-400' : 'text-zinc-700 dark:text-zinc-200'}`}>
                     {formatAmount(tx.amount, tx.type)}
                   </td>
                   {role === 'Admin' && (
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-3">
-                        <button className="text-zinc-500 hover:text-blue-400 transition-colors" title="Edit" onClick={() => onEdit(tx)}>
+                        <button className="text-zinc-500 hover:text-blue-500 dark:hover:text-blue-400 transition-colors" title="Edit" onClick={() => onEdit(tx)}>
                           <Edit size={18} />
                         </button>
                         <button 
-                          className="text-zinc-500 hover:text-red-400 transition-colors" 
+                          className="text-zinc-500 hover:text-red-500 dark:hover:text-red-400 transition-colors" 
                           title="Delete"
                           onClick={() => dispatch(deleteTransaction(tx.id))}
                         >
@@ -150,7 +150,7 @@ export function TransactionsTable({ onEdit }: { onEdit: (t: Transaction) => void
               ))
             ) : (
               <tr>
-                <td colSpan={role === 'Admin' ? 5 : 4} className="px-6 py-12 text-center text-zinc-500">
+                <td colSpan={role === 'Admin' ? 5 : 4} className="px-6 py-12 text-center text-zinc-500 transition-colors">
                   No transactions found matching your criteria.
                 </td>
               </tr>

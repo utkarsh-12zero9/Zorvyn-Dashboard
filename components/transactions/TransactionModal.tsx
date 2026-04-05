@@ -106,28 +106,28 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-md p-6 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/30 dark:bg-black/60 backdrop-blur-sm px-4 transition-colors">
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl w-full max-w-md p-6 shadow-xl dark:shadow-2xl transition-colors">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-white">
+          <h2 className="text-xl font-bold text-zinc-900 dark:text-white transition-colors">
             {transaction ? 'Edit Transaction' : 'Add Transaction'}
           </h2>
-          <button onClick={onClose} className="text-zinc-400 hover:text-white transition-colors">
+          <button onClick={onClose} className="text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors">
             <X size={20} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-1">Type</label>
+            <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1 transition-colors">Type</label>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, type: 'Expense' })}
                 className={`py-2 px-4 rounded-lg text-sm font-medium border transition-colors ${
                   formData.type === 'Expense' 
-                    ? 'bg-orange-500/20 border-orange-500/50 text-orange-400' 
-                    : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:bg-zinc-800'
+                    ? 'bg-orange-100 dark:bg-orange-500/20 border-orange-500 dark:border-orange-500/50 text-orange-600 dark:text-orange-400' 
+                    : 'bg-zinc-50 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800'
                 }`}
               >
                 Expense
@@ -137,8 +137,8 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
                 onClick={() => setFormData({ ...formData, type: 'Income' })}
                 className={`py-2 px-4 rounded-lg text-sm font-medium border transition-colors ${
                   formData.type === 'Income' 
-                    ? 'bg-green-500/20 border-green-500/50 text-green-400' 
-                    : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:bg-zinc-800'
+                    ? 'bg-green-100 dark:bg-green-500/20 border-green-500 dark:border-green-500/50 text-green-700 dark:text-green-400' 
+                    : 'bg-zinc-50 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800'
                 }`}
               >
                 Income
@@ -147,7 +147,7 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-1">Amount</label>
+            <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1 transition-colors">Amount</label>
             <input
               type="number"
               required
@@ -155,38 +155,38 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
               step="0.01"
               value={formData.amount}
               onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-              className="w-full bg-black border border-zinc-800 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-green-500 transition-colors"
+              className="w-full bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2 text-zinc-900 dark:text-white focus:outline-none focus:border-green-500 transition-colors"
               placeholder="0.00"
             />
           </div>
 
           <div ref={dropdownRef}>
-            <label className="block text-sm font-medium text-zinc-400 mb-1">Category</label>
+            <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1 transition-colors">Category</label>
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className={`w-full bg-black border rounded-lg px-4 py-2 text-left transition-colors flex justify-between items-center ${
-                  isDropdownOpen ? 'border-green-500' : 'border-zinc-800 focus:border-green-500'
+                className={`w-full bg-white dark:bg-black border rounded-lg px-4 py-2 text-left transition-colors flex justify-between items-center ${
+                  isDropdownOpen ? 'border-green-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-green-500'
                 }`}
               >
                 {formData.category ? (
-                  <span className="text-white">{formData.category}</span>
+                  <span className="text-zinc-900 dark:text-white transition-colors">{formData.category}</span>
                 ) : (
-                  <span className="text-zinc-600">Select a category</span>
+                  <span className="text-zinc-500">Select a category</span>
                 )}
                 <ChevronDown size={16} className={`text-zinc-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {isDropdownOpen && (
-                <ul className="absolute z-20 w-full mt-2 bg-[#0a0a0a] border border-zinc-800 rounded-lg shadow-2xl overflow-hidden overflow-y-auto max-h-48 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                <ul className="absolute z-20 w-full mt-2 bg-white dark:bg-[#0a0a0a] border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-xl dark:shadow-2xl overflow-hidden overflow-y-auto max-h-48 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                   {(formData.type === 'Expense' 
                     ? ['Groceries', 'Utilities', 'Entertainment', 'Transport', 'Shopping', 'Dining'] 
                     : ['Salary', 'Freelance', 'Investments', 'Other']
                   ).map((option) => {
                     const isSelected = formData.category === option;
-                    const hoverColor = formData.type === 'Expense' ? 'hover:text-orange-400 hover:bg-orange-500/10' : 'hover:text-green-400 hover:bg-green-500/10';
-                    const activeColor = formData.type === 'Expense' ? 'text-orange-400 bg-orange-500/10' : 'text-green-400 bg-green-500/10';
+                    const hoverColor = formData.type === 'Expense' ? 'hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-500/10' : 'hover:text-green-600 dark:hover:text-green-400 hover:bg-green-50 dark:hover:bg-green-500/10';
+                    const activeColor = formData.type === 'Expense' ? 'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10' : 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10';
 
                     return (
                       <li
@@ -196,7 +196,7 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
                           setIsDropdownOpen(false);
                         }}
                         className={`px-4 py-2.5 text-sm cursor-pointer transition-colors ${
-                          isSelected ? activeColor + ' font-medium' : 'text-zinc-300 ' + hoverColor
+                          isSelected ? activeColor + ' font-medium' : 'text-zinc-600 dark:text-zinc-300 ' + hoverColor
                         }`}
                       >
                         {option}
@@ -209,27 +209,27 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
           </div>
 
           <div ref={datePickerRef}>
-            <label className="block text-sm font-medium text-zinc-400 mb-1">Date</label>
+            <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1 transition-colors">Date</label>
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
-                className={`w-full bg-black border rounded-lg px-4 py-2 text-left transition-colors flex justify-between items-center ${
-                  isDatePickerOpen ? 'border-green-500' : 'border-zinc-800 focus:border-green-500'
+                className={`w-full bg-white dark:bg-black border rounded-lg px-4 py-2 text-left transition-colors flex justify-between items-center ${
+                  isDatePickerOpen ? 'border-green-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-green-500'
                 }`}
               >
-                <span className="text-white">{formData.date}</span>
+                <span className="text-zinc-900 dark:text-white transition-colors">{formData.date}</span>
                 <CalendarIcon size={16} className="text-zinc-500" />
               </button>
 
               {isDatePickerOpen && (
-                <div className="absolute z-20 w-72 mt-2 p-4 bg-[#0a0a0a] border border-zinc-800 rounded-lg shadow-2xl -top-80 sm:-top-auto right-0 sm:right-auto">
+                <div className="absolute z-20 w-72 mt-2 p-4 bg-white dark:bg-[#0a0a0a] border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-xl dark:shadow-2xl -top-80 sm:-top-auto right-0 sm:right-auto transition-colors">
                   <div className="flex justify-between items-center mb-4">
-                    <button type="button" onClick={handlePrevMonth} className="p-1 hover:bg-zinc-800 rounded-lg text-zinc-400 transition-colors"><ChevronLeft size={18}/></button>
-                    <span className="text-sm font-semibold text-white tracking-wide">
+                    <button type="button" onClick={handlePrevMonth} className="p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg text-zinc-500 dark:text-zinc-400 transition-colors"><ChevronLeft size={18}/></button>
+                    <span className="text-sm font-semibold text-zinc-900 dark:text-white tracking-wide transition-colors">
                       {currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}
                     </span>
-                    <button type="button" onClick={handleNextMonth} className="p-1 hover:bg-zinc-800 rounded-lg text-zinc-400 transition-colors"><ChevronRight size={18}/></button>
+                    <button type="button" onClick={handleNextMonth} className="p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg text-zinc-500 dark:text-zinc-400 transition-colors"><ChevronRight size={18}/></button>
                   </div>
                   
                   <div className="grid grid-cols-7 gap-1 text-center mb-2">
@@ -247,8 +247,8 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
                       const iso = new Date(d.getTime() - tzOffset).toISOString().split('T')[0];
                       const isSelected = formData.date === iso;
                       
-                      const themeColor = formData.type === 'Expense' ? 'bg-orange-500 text-black font-bold' : 'bg-green-500 text-black font-bold';
-                      const hoverColor = formData.type === 'Expense' ? 'hover:bg-orange-500/20 hover:text-orange-400' : 'hover:bg-green-500/20 hover:text-green-400';
+                      const themeColor = formData.type === 'Expense' ? 'bg-orange-500 text-white dark:text-black font-bold' : 'bg-green-500 text-white dark:text-black font-bold';
+                      const hoverColor = formData.type === 'Expense' ? 'hover:bg-orange-50 dark:hover:bg-orange-500/20 hover:text-orange-600 dark:hover:text-orange-400' : 'hover:bg-green-50 dark:hover:bg-green-500/20 hover:text-green-600 dark:hover:text-green-400';
 
                       return (
                         <button
@@ -256,7 +256,7 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
                           type="button"
                           onClick={() => handleSelectDate(day)}
                           className={`p-1.5 rounded-lg transition-colors focus:outline-none ${
-                            isSelected ? themeColor : `text-zinc-300 ${hoverColor}`
+                            isSelected ? themeColor : `text-zinc-700 dark:text-zinc-300 ${hoverColor}`
                           }`}
                         >
                           {day}
@@ -273,13 +273,13 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 bg-black border border-zinc-800 hover:bg-zinc-900 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+              className="flex-1 bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-900 dark:text-white font-medium py-2 px-4 rounded-lg transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className={`flex-1 text-black font-semibold py-2 px-4 rounded-lg flex items-center justify-center transition-colors ${
+              className={`flex-1 text-white dark:text-black font-semibold py-2 px-4 rounded-lg flex items-center justify-center transition-colors ${
                 formData.type === 'Expense' ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-500 hover:bg-green-600'
               }`}
             >

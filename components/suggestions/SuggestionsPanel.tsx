@@ -52,20 +52,16 @@ export function SuggestionsPanel() {
       { name: "Corporate Bonds", reason: "Fixed-income securities.", icon: Briefcase, min: 1000, triggerCat: 'any' }
     ];
 
-    // Filter available investments based on surplus capacity
     let availableInvestments = investmentPool.filter(i => avgMonthlySurplus >= i.min);
     if (availableInvestments.length === 0) {
       availableInvestments = investmentPool.filter(i => i.min === 0);
     }
 
-    // Sort by relevance to their top spending category, then by a pseudo-random hash of their total expense 
-    // This makes it dynamic to their actual data state, but stable for that state.
     availableInvestments.sort((a, b) => {
       const aMatch = a.triggerCat === topDiscretionary.category ? 1 : 0;
       const bMatch = b.triggerCat === topDiscretionary.category ? 1 : 0;
       if (aMatch !== bMatch) return bMatch - aMatch;
       
-      // Pseudo-random based on data volume so it changes if they add/remove transactions
       const hashA = (a.name.length * totalExpense) % 100;
       const hashB = (b.name.length * totalExpense) % 100;
       return hashB - hashA;
@@ -77,9 +73,7 @@ export function SuggestionsPanel() {
     const mindfulCategories = ['Health & Wellness', 'Education & Courses', 'Travel & Experiences', 'Charity'];
     const activeCategories = Object.keys(expenseByCategory);
     
-    // Suggest sectors they barely spend on
     const unusedMindful = mindfulCategories.filter(c => !activeCategories.includes(c));
-    // Use data-hash to pick them consistently but dynamically
     const suggestions = unusedMindful.length >= 2 ? unusedMindful : mindfulCategories;
     const finalSpendMore = suggestions.sort((a, b) => ((a.length * totalExpense) % 10) - ((b.length * totalExpense) % 10)).slice(0, 2);
 
@@ -97,27 +91,26 @@ export function SuggestionsPanel() {
   if (!insights) return null;
 
   return (
-    <div className="space-y-8 relative">
-      {/* Ambient background glow */}
+    <div className="space-y-8 relative transition-colors">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-64 bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none" />
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10 bg-zinc-900/50 backdrop-blur-xl border border-zinc-800/50 p-6 rounded-2xl shadow-2xl">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 p-6 rounded-2xl shadow-xl dark:shadow-2xl transition-colors">
         <div className="flex items-center gap-4">
           <div className="relative">
             <div className="absolute inset-0 bg-indigo-500 blur-lg opacity-40 animate-pulse" />
-            <div className="relative p-3 bg-zinc-900 border border-indigo-500/50 rounded-xl">
-              <BrainCircuit className="text-indigo-400" size={28} />
+            <div className="relative p-3 bg-zinc-50 dark:bg-zinc-900 border border-indigo-500/30 dark:border-indigo-500/50 rounded-xl transition-colors">
+              <BrainCircuit className="text-indigo-500 dark:text-indigo-400" size={28} />
             </div>
           </div>
           <div>
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-300 via-purple-300 to-fuchsia-300 bg-clip-text text-transparent">
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-fuchsia-500 dark:from-indigo-300 dark:via-purple-300 dark:to-fuchsia-300 bg-clip-text text-transparent transition-colors">
               AI Financial Engine
             </h2>
-            <p className="text-sm text-zinc-400 mt-1">Synthesizing your transaction genome into actionable directives.</p>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1 transition-colors">Synthesizing your transaction genome into actionable directives.</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 bg-indigo-500/10 text-indigo-300 rounded-full text-xs font-semibold border border-indigo-500/20">
+        <div className="flex items-center gap-2 px-4 py-2 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 rounded-full text-xs font-semibold border border-indigo-500/20 transition-colors">
           <Sparkles size={14} /> Synchronized
         </div>
       </div>
@@ -125,42 +118,42 @@ export function SuggestionsPanel() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-10">
         
         {/* Suggestion 1: Save More */}
-        <div className="relative overflow-hidden bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-3xl p-8 group hover:-translate-y-1 hover:border-indigo-500/40 hover:shadow-[0_8px_30px_rgb(99,102,241,0.1)] transition-all duration-300">
+        <div className="relative overflow-hidden bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 group hover:-translate-y-1 hover:border-indigo-500/40 hover:shadow-[0_8px_30px_rgb(99,102,241,0.1)] transition-all duration-300">
           <div className="flex items-start gap-5">
-            <div className="p-4 bg-zinc-950 border border-indigo-500/20 rounded-2xl group-hover:border-indigo-500/50 transition-colors">
-              <Zap className="text-indigo-400" size={26} />
+            <div className="p-4 bg-zinc-50 dark:bg-zinc-950 border border-indigo-500/20 rounded-2xl group-hover:border-indigo-500/50 transition-colors">
+              <Zap className="text-indigo-500 dark:text-indigo-400" size={26} />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-white mb-3">Optimization Protocol: Save More</h3>
+              <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-3 transition-colors">Optimization Protocol: Save More</h3>
               {insights.topDiscretionaryCategory !== 'None' && insights.avgMonthlyDiscretionary > 0 ? (
-                <p className="text-zinc-400 leading-relaxed">
-                  My analysis traces your highest flexible expenditure to <span className="text-zinc-200 font-medium px-2 py-0.5 bg-zinc-800 rounded-md">{insights.topDiscretionaryCategory}</span>, averaging <span className="text-zinc-200 font-medium">${insights.avgMonthlyDiscretionary.toFixed(0)}/mo</span>. 
+                <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed transition-colors">
+                  My analysis traces your highest flexible expenditure to <span className="text-zinc-900 dark:text-zinc-200 font-medium px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded-md transition-colors">{insights.topDiscretionaryCategory}</span>, averaging <span className="text-zinc-900 dark:text-zinc-200 font-medium transition-colors">${insights.avgMonthlyDiscretionary.toFixed(0)}/mo</span>. 
                   <br className="my-3" />
-                  Strategically shaving this by just <span className="text-indigo-400 font-semibold">15%</span> will yield an extra <span className="text-green-400 font-bold bg-green-400/10 px-2 py-0.5 rounded-md">${insights.saveMoreTarget.toFixed(0)}</span> in monthly liquidity.
+                  Strategically shaving this by just <span className="text-indigo-600 dark:text-indigo-400 font-semibold transition-colors">15%</span> will yield an extra <span className="text-emerald-600 dark:text-green-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-md transition-colors">${insights.saveMoreTarget.toFixed(0)}</span> in monthly liquidity.
                 </p>
               ) : (
-                <p className="text-zinc-400 leading-relaxed">Your discretionary spending is highly optimized. Maintain this frugal baseline for maximum capital accumulation.</p>
+                <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed transition-colors">Your discretionary spending is highly optimized. Maintain this frugal baseline for maximum capital accumulation.</p>
               )}
             </div>
           </div>
         </div>
 
         {/* Suggestion 2: Spend More / Well-being */}
-        <div className="relative overflow-hidden bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-3xl p-8 group hover:-translate-y-1 hover:border-fuchsia-500/40 hover:shadow-[0_8px_30px_rgb(217,70,239,0.1)] transition-all duration-300">
+        <div className="relative overflow-hidden bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 group hover:-translate-y-1 hover:border-fuchsia-500/40 hover:shadow-[0_8px_30px_rgb(217,70,239,0.1)] transition-all duration-300">
           <div className="flex items-start gap-5">
-            <div className="p-4 bg-zinc-950 border border-fuchsia-500/20 rounded-2xl group-hover:border-fuchsia-500/50 transition-colors">
-              <Sprout className="text-fuchsia-400" size={26} />
+            <div className="p-4 bg-zinc-50 dark:bg-zinc-950 border border-fuchsia-500/20 rounded-2xl group-hover:border-fuchsia-500/50 transition-colors">
+              <Sprout className="text-fuchsia-500 dark:text-fuchsia-400" size={26} />
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-bold text-white mb-3">Mindful Allocation</h3>
-              <p className="text-zinc-400 leading-relaxed mb-5">
+              <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-3 transition-colors">Mindful Allocation</h3>
+              <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed mb-5 transition-colors">
                 Financial health encompasses holistic well-being. The data genome reveals an under-investment in personal growth sectors. Consider allocating surplus to:
               </p>
               <div className="grid grid-cols-1 gap-3">
                 {insights.spendMoreSuggestions.map((suggestion, idx) => (
-                  <div key={idx} className="flex items-center gap-3 p-3 bg-zinc-950/50 border border-zinc-800 rounded-xl">
-                    <div className="w-2 h-2 rounded-full bg-fuchsia-500 shadow-[0_0_8px_rgb(217,70,239)]" />
-                    <span className="text-sm font-medium text-zinc-300">{suggestion}</span>
+                  <div key={idx} className="flex items-center gap-3 p-3 bg-zinc-50 dark:bg-zinc-950/50 border border-zinc-200 dark:border-zinc-800 rounded-xl transition-colors">
+                    <div className="w-2 h-2 rounded-full bg-fuchsia-500 shadow-[0_0_8px_rgb(217,70,239)] shrink-0" />
+                    <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300 transition-colors">{suggestion}</span>
                   </div>
                 ))}
               </div>
@@ -169,19 +162,19 @@ export function SuggestionsPanel() {
         </div>
 
         {/* Suggestion 3: Wealth Generation */}
-        <div className="relative overflow-hidden bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-3xl p-8 lg:col-span-2 group hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-[0_8px_30px_rgb(16,185,129,0.1)] transition-all duration-300">
+        <div className="relative overflow-hidden bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 lg:col-span-2 group hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-[0_8px_30px_rgb(16,185,129,0.1)] transition-all duration-300">
           <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[80px] rounded-full pointer-events-none" />
           
           <div className="flex flex-col md:flex-row gap-6 lg:gap-10 relative z-10">
             <div className="md:w-1/3">
               <div className="flex items-center gap-4 mb-4">
-                <div className="p-4 bg-zinc-950 border border-emerald-500/20 rounded-2xl group-hover:border-emerald-500/50 transition-colors">
-                  <TrendingUp className="text-emerald-400" size={26} />
+                <div className="p-4 bg-zinc-50 dark:bg-zinc-950 border border-emerald-500/20 rounded-2xl group-hover:border-emerald-500/50 transition-colors">
+                  <TrendingUp className="text-emerald-500 dark:text-emerald-400" size={26} />
                 </div>
-                <h3 className="text-xl font-bold text-white">Wealth Directives</h3>
+                <h3 className="text-xl font-bold text-zinc-900 dark:text-white transition-colors">Wealth Directives</h3>
               </div>
-              <p className="text-zinc-400 leading-relaxed">
-                Estimated monthly surplus sits at <span className="text-emerald-400 font-bold bg-emerald-400/10 px-2 py-0.5 rounded-md">${Math.max(0, insights.avgMonthlySurplus).toFixed(0)}</span>. Based on your specific cashflow volume and expenditure categories, the AI recommends routing capital into these diversified vehicles to outpace inflation.
+              <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed transition-colors">
+                Estimated monthly surplus sits at <span className="text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-md transition-colors">${Math.max(0, insights.avgMonthlySurplus).toFixed(0)}</span>. Based on your specific cashflow volume and expenditure categories, the AI recommends routing capital into these diversified vehicles to outpace inflation.
               </p>
             </div>
             
@@ -189,10 +182,10 @@ export function SuggestionsPanel() {
               {insights.investmentSuggestions.map((inv, idx) => {
                 const Icon = inv.icon;
                 return (
-                  <div key={idx} className="bg-zinc-950/80 border border-zinc-800/80 p-5 rounded-2xl hover:bg-zinc-900 hover:border-emerald-500/30 transition-all cursor-default">
+                  <div key={idx} className="bg-zinc-50 dark:bg-zinc-950/80 border border-zinc-200 dark:border-zinc-800/80 p-5 rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:border-emerald-500/30 transition-all cursor-default">
                     <Icon className="text-emerald-500 mb-4" size={24} />
-                    <h4 className="font-semibold text-zinc-100 mb-2">{inv.name}</h4>
-                    <p className="text-xs text-zinc-500 leading-relaxed">{inv.reason}</p>
+                    <h4 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-2 transition-colors">{inv.name}</h4>
+                    <p className="text-xs text-zinc-600 dark:text-zinc-500 leading-relaxed transition-colors">{inv.reason}</p>
                   </div>
                 );
               })}

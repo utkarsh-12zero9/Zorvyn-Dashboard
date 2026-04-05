@@ -72,9 +72,9 @@ export function AdvancedInsights() {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
       
       {/* Settings Trend Area Chart */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 lg:col-span-2">
-        <h3 className="text-lg font-semibold text-white mb-2">Net Savings Trend</h3>
-        <p className="text-sm text-zinc-400 mb-6">Track your month-over-month accumulated savings.</p>
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 lg:col-span-2 transition-colors">
+        <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-2 transition-colors">Net Savings Trend</h3>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-6 transition-colors">Track your month-over-month accumulated savings.</p>
         <div className="h-80">
           {timeData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
@@ -103,9 +103,9 @@ export function AdvancedInsights() {
       </div>
 
       {/* Cashflow Breakdowns */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-white mb-2">Monthly Cashflow Dynamics</h3>
-        <p className="text-sm text-zinc-400 mb-6">Income vs Expenses overlaid with Net flow.</p>
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 transition-colors">
+        <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-2 transition-colors">Monthly Cashflow Dynamics</h3>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-6 transition-colors">Income vs Expenses overlaid with Net flow.</p>
         <div className="h-80">
           {timeData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
@@ -130,9 +130,9 @@ export function AdvancedInsights() {
       </div>
 
       {/* Radar Chart for Spending Distribution */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 relative">
-        <h3 className="text-lg font-semibold text-white mb-2">Expense DNA</h3>
-        <p className="text-sm text-zinc-400 mb-6">A structural breakdown of your typical spending categories.</p>
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 relative transition-colors">
+        <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-2 transition-colors">Expense DNA</h3>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-6 transition-colors">A structural breakdown of your typical spending categories.</p>
         <div className="h-80">
           {radarData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">

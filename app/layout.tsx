@@ -14,6 +14,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+import { ThemeProvider } from "@/components/ThemeProvider";
+
 export const metadata: Metadata = {
   title: "Zorvyn Finance Dashboard",
   description: "Interactive finance tracking dashboard",
@@ -27,12 +29,15 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-black text-white">
-        <StoreProvider>
-          <AppLayout>{children}</AppLayout>
-        </StoreProvider>
+      <body className="min-h-full flex flex-col bg-white dark:bg-black text-black dark:text-white">
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
+          <StoreProvider>
+            <AppLayout>{children}</AppLayout>
+          </StoreProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

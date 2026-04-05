@@ -78,8 +78,8 @@ export function DashboardCharts() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-white mb-6">Income vs Expenses</h3>
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 transition-colors">
+        <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-6">Income vs Expenses</h3>
         <div className="h-72">
           {barData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
@@ -106,13 +106,13 @@ export function DashboardCharts() {
         </div>
       </div>
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 relative">
-        <h3 className="text-lg font-semibold text-white mb-6">Spending by Category</h3>
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 relative transition-colors">
+        <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-6">Spending by Category</h3>
         <div className="h-72 relative">
           {pieData.length > 0 ? (
             <>
               <div className="absolute top-0 left-0 w-full h-[calc(100%-36px)] flex items-center justify-center pointer-events-none z-10">
-                <span className="text-white text-2xl font-bold">100%</span>
+                <span className="text-zinc-900 dark:text-white text-2xl font-bold">100%</span>
               </div>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>

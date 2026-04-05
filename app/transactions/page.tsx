@@ -26,13 +26,13 @@ export default function TransactionsPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-end">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-white flex items-center">Transactions</h2>
-          <p className="text-zinc-400">Manage and view all your financial transactions.</p>
+          <h2 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white flex items-center transition-colors">Transactions</h2>
+          <p className="text-zinc-600 dark:text-zinc-400 transition-colors">Manage and view all your financial transactions.</p>
         </div>
         {role === 'Admin' && (
           <button 
             onClick={handleAddNew}
-            className="flex items-center gap-2 bg-green-500 hover:bg-green-400 text-black px-4 py-2 rounded-lg font-semibold transition-colors shadow-sm"
+            className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white dark:text-black px-4 py-2 rounded-lg font-semibold transition-colors shadow-sm"
           >
             <Plus size={18} />
             <span className="hidden sm:inline">Add Transaction</span>

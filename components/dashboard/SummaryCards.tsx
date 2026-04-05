@@ -46,12 +46,12 @@ export function SummaryCards() {
 
 function Card({ title, amount, icon }: { title: string, amount: number, icon: React.ReactNode }) {
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 flex items-center justify-between">
+    <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 flex items-center justify-between transition-colors shadow-sm dark:shadow-none">
       <div>
-        <p className="text-sm font-medium text-zinc-400">{title}</p>
-        <p className="text-3xl font-bold text-white mt-1">${amount.toLocaleString()}</p>
+        <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">{title}</p>
+        <p className="text-3xl font-bold text-zinc-900 dark:text-white mt-1">${amount.toLocaleString()}</p>
       </div>
-      <div className="p-3 bg-black rounded-lg border border-zinc-800 shadow-sm">
+      <div className="p-3 bg-zinc-50 dark:bg-black rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm transition-colors">
         {icon}
       </div>
     </div>
