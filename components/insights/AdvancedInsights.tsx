@@ -150,32 +150,50 @@ export function AdvancedInsights() {
         </div>
       </div>
 
-      {/* Radar Chart for Spending Distribution */}
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 sm:p-6 relative transition-[transform,box-shadow,border-color,background-color] duration-300 transform transform-gpu hover:-translate-y-1 hover:shadow-lg hover:shadow-red-500/10 dark:hover:shadow-red-500/10 hover:border-red-500/30 group min-w-0">
-        <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-1 transition-colors">Expense DNA</h3>
-        <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mb-6 transition-colors">Structural breakdown of spending categories.</p>
-        <div className="h-72 sm:h-80 w-full relative min-h-[288px]">
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 sm:p-8 relative transition-[transform,box-shadow,border-color,background-color] duration-300 transform transform-gpu hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-500/10 dark:hover:shadow-emerald-500/10 hover:border-emerald-500/30 group min-w-0 h-full flex flex-col">
+        <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-1 transition-colors">Expense DNA</h3>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-8 transition-colors">Structural breakdown of your spending patterns.</p>
+        <div className="flex-1 w-full relative min-h-[300px]">
           {delayedMount && radarData.length > 0 ? (
             <ResponsiveContainer width="99.9%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius={65} data={radarData}>
+              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
                 <defs>
                   <linearGradient id="colorRadar" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.6} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.1} />
                   </linearGradient>
                 </defs>
-                <PolarGrid stroke="#3f3f46" />
-                <PolarAngleAxis dataKey="category" tick={{ fill: '#a1a1aa', fontSize: 10 }} />
-                <PolarRadiusAxis angle={30} domain={[0, 'fullMark']} tick={false} axisLine={false} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: '#18181b', borderColor: '#27272a', color: '#fff', borderRadius: '8px', fontSize: '10px' }}
+                <PolarGrid stroke="#52525b" strokeOpacity={0.3} gridType="polygon" />
+                <PolarAngleAxis 
+                  dataKey="category" 
+                  tick={{ fill: '#a1a1aa', fontSize: 12, fontWeight: 500 }} 
                 />
-                <Radar name="Expenses" dataKey="amount" stroke="#ef4444" fill="url(#colorRadar)" fillOpacity={0.6} isAnimationActive={true} strokeWidth={2} />
+                <PolarRadiusAxis 
+                  angle={30} 
+                  domain={[0, 'fullMark']} 
+                  tick={false} 
+                  axisLine={false} 
+                />
+                <Radar 
+                  name="Expenses" 
+                  dataKey="amount" 
+                  stroke="#10b981" 
+                  strokeWidth={2.5}
+                  fill="url(#colorRadar)" 
+                  fillOpacity={1} 
+                  isAnimationActive={true}
+                  animationDuration={1500}
+                />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#18181b', borderColor: '#27272a', color: '#fff', borderRadius: '12px', padding: '12px', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                  itemStyle={{ color: '#10b981', fontWeight: 'bold' }}
+                  formatter={(value: any, name: any) => [`$${value}`, "Amount"]}
+                />
               </RadarChart>
             </ResponsiveContainer>
           ) : (
              <div className="h-full flex items-center justify-center text-zinc-500 animate-pulse">
-               {delayedMount ? 'No data available' : 'Loading DNA...'}
+               {delayedMount ? 'No data available' : 'Mapping DNA...'}
              </div>
           )}
         </div>
