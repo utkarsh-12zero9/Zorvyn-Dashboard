@@ -17,14 +17,61 @@ interface FinanceState {
   role: Role;
 }
 
-// Initial mock data
-const initialTransactions: Transaction[] = [
-  { id: '1', date: '2023-10-01', amount: 5000, category: 'Salary', type: 'Income' },
-  { id: '2', date: '2023-10-05', amount: 150, category: 'Groceries', type: 'Expense' },
-  { id: '3', date: '2023-10-10', amount: 200, category: 'Utilities', type: 'Expense' },
-  { id: '4', date: '2023-10-15', amount: 300, category: 'Entertainment', type: 'Expense' },
-  { id: '5', date: '2023-10-20', amount: 1000, category: 'Freelance', type: 'Income' },
-];
+// Generate vast consistent mock data
+const generateMockData = (): Transaction[] => {
+  const data: Transaction[] = [];
+  const categories = ['Groceries', 'Utilities', 'Entertainment', 'Transport', 'Shopping', 'Dining'];
+  
+  const now = new Date();
+  // Generate data for the last 6 months
+  for (let m = 0; m < 6; m++) {
+    const monthBase = new Date(now.getFullYear(), now.getMonth() - m, 1);
+    
+    // 1 Salary per month
+    data.push({
+      id: `sal-${m}`,
+      date: new Date(monthBase.getFullYear(), monthBase.getMonth(), 5).toISOString().split('T')[0],
+      amount: 4500,
+      category: 'Salary',
+      type: 'Income'
+    });
+
+    // 15-20 expenses per month
+    const expenseCount = 15 + Math.floor(Math.random() * 6);
+    for (let i = 0; i < expenseCount; i++) {
+      const day = Math.floor(Math.random() * 28) + 1;
+      const cat = categories[Math.floor(Math.random() * categories.length)];
+      
+      let amount = 0;
+      if (cat === 'Groceries') amount = 50 + Math.random() * 100;
+      else if (cat === 'Utilities') amount = 100 + Math.random() * 150;
+      else if (cat === 'Shopping') amount = 20 + Math.random() * 300;
+      else amount = 15 + Math.random() * 80;
+
+      data.push({
+        id: `exp-${m}-${i}`,
+        date: new Date(monthBase.getFullYear(), monthBase.getMonth(), day).toISOString().split('T')[0],
+        amount: parseFloat(amount.toFixed(2)),
+        category: cat,
+        type: 'Expense'
+      });
+    }
+
+    // Occasional freelance income
+    if (Math.random() > 0.5) {
+      data.push({
+        id: `free-${m}`,
+        date: new Date(monthBase.getFullYear(), monthBase.getMonth(), 15).toISOString().split('T')[0],
+        amount: 300 + Math.random() * 500,
+        category: 'Freelance',
+        type: 'Income'
+      });
+    }
+  }
+  return data.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+};
+
+const initialTransactions: Transaction[] = generateMockData();
 
 const initialState: FinanceState = {
   transactions: initialTransactions,
