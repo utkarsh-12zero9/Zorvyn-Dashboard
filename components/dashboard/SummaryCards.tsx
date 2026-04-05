@@ -49,7 +49,7 @@ export function SummaryCards() {
 
 function Card({ title, amount, icon, hoverGlow }: { title: string, amount: number, icon: React.ReactNode, hoverGlow?: string }) {
   return (
-    <div className={`bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 flex items-center justify-between transition-all duration-300 transform hover:-translate-y-1 shadow-sm dark:shadow-none cursor-default group ${hoverGlow || ''}`}>
+    <div className={`bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 flex items-center justify-between transition-[transform,box-shadow,border-color,background-color] duration-300 transform hover:-translate-y-1 shadow-sm dark:shadow-none cursor-default group transform-gpu ${hoverGlow || ''}`}>
       <div>
         <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors">{title}</p>
         <p className="text-3xl font-bold text-zinc-900 dark:text-white mt-1 transition-colors">${amount.toLocaleString()}</p>

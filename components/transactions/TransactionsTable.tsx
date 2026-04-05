@@ -117,7 +117,7 @@ export function TransactionsTable({ onEdit }: { onEdit: (t: Transaction) => void
           <tbody>
             {processedTransactions.length > 0 ? (
               processedTransactions.map((tx) => (
-                <tr key={tx.id} className="group border-b border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors duration-200 cursor-default">
+                <tr key={tx.id} className="group border-b border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-[background-color] duration-200 cursor-default transform-gpu">
                   <td className="px-6 py-4 whitespace-nowrap text-zinc-600 dark:text-zinc-300 transition-colors">{tx.date}</td>
                   <td className="px-6 py-4 text-zinc-900 dark:text-white font-medium transition-colors">{tx.category}</td>
                   <td className="px-6 py-4">

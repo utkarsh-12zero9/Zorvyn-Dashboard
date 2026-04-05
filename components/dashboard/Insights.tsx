@@ -15,17 +15,17 @@ export function Insights() {
     const expenseByCategory: Record<string, number> = {};
     let maxSingleExpense = { amount: 0, category: '', date: '' };
 
-    const months = new Set();
+    const months = new Set<string>();
 
     transactions.forEach(t => {
-      months.add(t.date.substring(0, 7)); // Count unique months for average
+      months.add(t.date.substring(0, 7));
 
       if (t.type === 'Income') {
         totalIncome += t.amount;
       } else {
         totalExpense += t.amount;
         expenseByCategory[t.category] = (expenseByCategory[t.category] || 0) + t.amount;
-
+        
         if (t.amount > maxSingleExpense.amount) {
           maxSingleExpense = { amount: t.amount, category: t.category, date: t.date };
         }
@@ -62,55 +62,60 @@ export function Insights() {
   if (!insights) return null;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-1">
       {/* 1. Top Spending Category */}
-      <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 flex items-start gap-4 transition-colors">
-        <div className="p-2.5 bg-red-400/10 border border-red-500/20 rounded-lg text-red-400">
-          <Flame size={18} />
-        </div>
-        <div>
-          <h4 className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider">Top Spending</h4>
-          <p className="text-lg font-bold text-zinc-900 dark:text-white mt-1 leading-snug">{insights.topCategory}</p>
-          <p className="text-xs text-zinc-500 mt-1">{insights.topPct}% of all expenses</p>
-        </div>
-      </div>
+      <InsightCard 
+        icon={<Flame size={20} />} 
+        color="bg-red-500/10 text-red-500 border-red-500/20" 
+        label="Top Spending" 
+        value={insights.topCategory} 
+        subtext={`${insights.topPct}% of expenses`}
+      />
 
       {/* 2. Monthly Average Expense */}
-      <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 flex items-start gap-4 transition-colors">
-        <div className="p-2.5 bg-blue-500/10 border border-blue-500/20 rounded-lg text-blue-400">
-          <BarChart2 size={18} />
-        </div>
-        <div>
-          <h4 className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider">Monthly Avg</h4>
-          <p className="text-lg font-bold text-zinc-900 dark:text-white mt-1 leading-snug">${insights.avgMonthlyExpense.toLocaleString('en-US', { maximumFractionDigits: 0 })}</p>
-          <p className="text-xs text-zinc-500 mt-1">Based on {insights.numMonths} months</p>
-        </div>
-      </div>
+      <InsightCard 
+        icon={<BarChart2 size={20} />} 
+        color="bg-blue-500/10 text-blue-500 border-blue-500/20" 
+        label="Monthly Avg" 
+        value={`$${insights.avgMonthlyExpense.toLocaleString('en-US', {maximumFractionDigits: 0})}`} 
+        subtext={`Based on ${insights.numMonths} months`}
+      />
 
       {/* 3. Largest Single Transaction */}
-      <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 flex items-start gap-4 transition-colors">
-        <div className="p-2.5 bg-orange-500/10 border border-orange-500/20 rounded-lg text-orange-400">
-          <ShoppingBag size={18} />
-        </div>
-        <div>
-          <h4 className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider">Largest Purchase</h4>
-          <p className="text-lg font-bold text-zinc-900 dark:text-white mt-1 leading-snug">${insights.maxSingleExpense.amount.toLocaleString()}</p>
-          <p className="text-xs text-zinc-500 mt-1">{insights.maxSingleExpense.category}</p>
-        </div>
-      </div>
+      <InsightCard 
+        icon={<ShoppingBag size={20} />} 
+        color="bg-orange-500/10 text-orange-500 border-orange-500/20" 
+        label="Largest Purchase" 
+        value={`$${insights.maxSingleExpense.amount.toLocaleString()}`} 
+        subtext={insights.maxSingleExpense.category}
+      />
 
       {/* 4. Financial Health / Savings Rate */}
-      <div className={`bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border rounded-xl p-5 flex items-start gap-4 transition-colors ${insights.isOverspending ? 'border-red-500/30' : 'border-zinc-200 dark:border-zinc-800'}`}>
-        <div className={`p-2.5 border rounded-lg ${insights.isOverspending ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-green-500/10 text-green-400 border-green-500/20'}`}>
-          {insights.isOverspending ? <AlertTriangle size={18} /> : <PiggyBank size={18} />}
+      <InsightCard 
+        icon={insights.isOverspending ? <AlertTriangle size={20} /> : <PiggyBank size={20} />} 
+        color={insights.isOverspending ? "bg-red-500/10 text-red-500 border-red-500/20" : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"} 
+        label="Savings Rate" 
+        value={`${insights.savingsRate}%`} 
+        subtext={insights.isOverspending ? 'Capital Deficit' : 'Healthy Surplus'}
+      />
+    </div>
+  );
+}
+
+function InsightCard({ icon, color, label, value, subtext }: { icon: React.ReactNode, color: string, label: string, value: string, subtext: string }) {
+  return (
+    <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 transition-all duration-300 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-md transform hover:-translate-y-1 group cursor-default transform-gpu">
+      <div className="flex items-center gap-4">
+        <div className={`p-3 rounded-xl ${color} transition-transform group-hover:scale-110 shadow-sm`}>
+          {icon}
         </div>
         <div>
-          <h4 className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider">Savings Rate</h4>
-          <p className="text-lg font-bold text-zinc-900 dark:text-white mt-1 leading-snug">{insights.savingsRate}%</p>
-          <p className="text-xs text-zinc-500 mt-1">
-            {insights.isOverspending ? 'Currently running a deficit' : 'Healthy surplus'}
-          </p>
+          <p className="text-[10px] font-bold text-zinc-400 dark:text-zinc-600 uppercase tracking-widest">{label}</p>
+          <p className="text-lg font-bold text-zinc-900 dark:text-white mt-0.5 leading-none transition-colors">{value}</p>
         </div>
+      </div>
+      <div className="mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800/50">
+        <p className="text-[10px] text-zinc-500 dark:text-zinc-500 uppercase tracking-tight font-medium">{subtext}</p>
       </div>
     </div>
   );

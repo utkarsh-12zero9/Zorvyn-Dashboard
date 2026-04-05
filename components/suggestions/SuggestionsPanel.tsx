@@ -91,15 +91,15 @@ export function SuggestionsPanel() {
   if (!insights) return null;
 
   return (
-    <div className="space-y-8 relative transition-colors">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-64 bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none" />
+    <div className="space-y-8 relative transition-all duration-500">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-48 bg-indigo-500/5 blur-[80px] rounded-full pointer-events-none" />
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 p-6 rounded-2xl shadow-xl dark:shadow-2xl transition-colors">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10 bg-white/40 dark:bg-zinc-900/40 backdrop-blur border border-zinc-200/50 dark:border-zinc-800/50 p-6 rounded-2xl shadow-lg dark:shadow-xl transition-all duration-300">
         <div className="flex items-center gap-4">
           <div className="relative">
-            <div className="absolute inset-0 bg-indigo-500 blur-lg opacity-40 animate-pulse" />
-            <div className="relative p-3 bg-zinc-50 dark:bg-zinc-900 border border-indigo-500/30 dark:border-indigo-500/50 rounded-xl transition-colors">
+            <div className="absolute inset-0 bg-indigo-500 blur-md opacity-20" />
+            <div className="relative p-3 bg-zinc-50 dark:bg-zinc-900 border border-indigo-500/20 dark:border-indigo-500/40 rounded-xl transition-all duration-300 transform-gpu">
               <BrainCircuit className="text-indigo-500 dark:text-indigo-400" size={28} />
             </div>
           </div>
@@ -118,7 +118,7 @@ export function SuggestionsPanel() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-10">
         
         {/* Suggestion 1: Save More */}
-        <div className="relative overflow-hidden bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 group hover:-translate-y-1 hover:border-indigo-500/40 hover:shadow-[0_8px_30px_rgb(99,102,241,0.1)] transition-all duration-300">
+        <div className="relative overflow-hidden bg-white/60 dark:bg-zinc-900/60 backdrop-blur border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 group hover:-translate-y-1 hover:border-indigo-500/30 hover:shadow-lg dark:hover:shadow-indigo-500/5 transition-all duration-300 transform-gpu cursor-default">
           <div className="flex items-start gap-5">
             <div className="p-4 bg-zinc-50 dark:bg-zinc-950 border border-indigo-500/20 rounded-2xl group-hover:border-indigo-500/50 transition-colors">
               <Zap className="text-indigo-500 dark:text-indigo-400" size={26} />
@@ -139,7 +139,7 @@ export function SuggestionsPanel() {
         </div>
 
         {/* Suggestion 2: Spend More / Well-being */}
-        <div className="relative overflow-hidden bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 group hover:-translate-y-1 hover:border-fuchsia-500/40 hover:shadow-[0_8px_30px_rgb(217,70,239,0.1)] transition-all duration-300">
+        <div className="relative overflow-hidden bg-white/60 dark:bg-zinc-900/60 backdrop-blur border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 group hover:-translate-y-1 hover:border-fuchsia-500/30 hover:shadow-lg dark:hover:shadow-fuchsia-500/5 transition-all duration-300 transform-gpu cursor-default">
           <div className="flex items-start gap-5">
             <div className="p-4 bg-zinc-50 dark:bg-zinc-950 border border-fuchsia-500/20 rounded-2xl group-hover:border-fuchsia-500/50 transition-colors">
               <Sprout className="text-fuchsia-500 dark:text-fuchsia-400" size={26} />
@@ -162,8 +162,8 @@ export function SuggestionsPanel() {
         </div>
 
         {/* Suggestion 3: Wealth Generation */}
-        <div className="relative overflow-hidden bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 lg:col-span-2 group hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-[0_8px_30px_rgb(16,185,129,0.1)] transition-all duration-300">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[80px] rounded-full pointer-events-none" />
+        <div className="relative overflow-hidden bg-white/60 dark:bg-zinc-900/60 backdrop-blur border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 lg:col-span-2 group hover:-translate-y-1 hover:border-emerald-500/30 hover:shadow-lg dark:hover:shadow-emerald-500/5 transition-all duration-300 transform-gpu cursor-default">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 blur-[60px] rounded-full pointer-events-none" />
           
           <div className="flex flex-col md:flex-row gap-6 lg:gap-10 relative z-10">
             <div className="md:w-1/3">
